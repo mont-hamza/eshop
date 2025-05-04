@@ -4,11 +4,11 @@ namespace eshop.Components.Pages.customer_components
 {
     public class Atrrib
     {
-        public int CustomerId;
-        public string CustomerName;
-        public Email CustomerEmail;
-        public int CustomerPhone;
-        public string CustomerCity;
+        public int CustomerId = customerId;
+        public string CustomerName = customerName;
+        public string CustomerEmail = customerEmail;
+        public int CustomerPhone = customerPhone;
+
 
         public Atrrib(int customerId, string customerName, Email customerEmail, int customerPhone, string customerCity)
         {
