@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 namespace eshop.Components.Pages.invoice_components
 {
     public class Invoice
-    {
-        
+    { 
+        public Invoice() { }
     }
 }

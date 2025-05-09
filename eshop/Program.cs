@@ -1,5 +1,6 @@
 using eshop.Components;
 using eshop.Components.Account;
+using eshop.Components.Pages.customer_components;
 using eshop.Data;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddScoped<CustomerDesignServices>();
 
 builder.Services.AddAuthentication(options =>
     {

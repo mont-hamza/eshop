@@ -1,0 +1,42 @@
+﻿@page "/customers"
+
+@rendermode InteractiveServer
+@inject CustomerDesignServices _customerService
+@using eshop.Data.Entities
+@using eshop.Components.Pages.customer_components
+<h3>Customers</h3>
+
+
+<MudTable Items="Cust" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>CustomerId</MudTh>
+        <MudTh>CustomerPhone</MudTh>
+        <MudTh>CustomerName</MudTh>
+        <MudTh>CustomerAddress</MudTh>
+        <MudTh>CustomerEmail</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="id">@context.CustomerId</MudTd>
+        <MudTd DataLabel="name">@context.CustomerName</MudTd>
+        <MudTd DataLabel="phone">@context.CustomerPhone</MudTd>
+        <MudTd DataLabel="email">@context.CustomerEmail</MudTd>
+        <MudTd DataLabel="address">@context.CustomerAddress</MudTd>
+    </RowTemplate>
+</MudTable>
+
+
+@code {
+
+    private bool _loading = false;
+
+
+    public List<CustomerDesignServices> Cust { get; set; } = new List<CustomerDesignServices>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        await Task.Delay(1000);
+        Cust = _customerService.GetCustomer();
+    }
+   
+}
