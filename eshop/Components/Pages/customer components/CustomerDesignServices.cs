@@ -31,8 +31,6 @@
             };
         }
         public Customer updateCustomer( Customer customer) 
-        { return customer; }
-        public void Delete(Customer customer)
         {
 
         }
