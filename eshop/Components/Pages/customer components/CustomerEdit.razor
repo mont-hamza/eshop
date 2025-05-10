@@ -1,0 +1,32 @@
+﻿@page "/customersedit"
+@page "/customersedit/{id:int}"
+@using eshop.Data.Entities
+
+<h3>CustomerEdit</h3>
+
+<MudTextField @bind-Value="Customer.CustomerName" Label="Customer Name" />
+<MudTextField @bind-Value="Customer.CustomerId" Label="Customer Identifiction" />
+<MudButton Color="Color.Primary" Variant="Variant.Filled"  @onclick="SaveCustomer">Save</MudButton>
+
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private CustomerDesignServices Customer { get; set; } = new CustomerDesignServices();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await Task.Delay(1000);
+
+
+    }
+    private async Task SaveCustomer()
+    {
+        // Simulate saving the customer
+        await Task.Delay(1000);
+        Console.WriteLine($"Saved Customer: {Customer.CustomerName}");
+    }
+}

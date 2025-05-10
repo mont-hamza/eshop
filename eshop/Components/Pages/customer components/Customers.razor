@@ -1,6 +1,8 @@
 ﻿@page "/customers"
 
 @rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Routing
+@inject NavigationManager NavigationManager
 @inject CustomerDesignServices _customerService
 @using eshop.Data.Entities
 @using eshop.Components.Pages.customer_components
@@ -8,12 +10,23 @@
 
 
 <MudTable Items="Cust" Hover="true" Loading="@_loading" LoadingProgressColor="Color.Info">
+     <ToolBarContent>
+         <MudSpacer />
+        <MudButton Color="Color.Primary" 
+        Variant="Variant.Filled" 
+        StartIcon="@Icons.Material.Filled.Add"
+         @onclick="NavigateToAddCustomer">
+             Add Customer
+     </MudButton>
+
+    </ToolBarContent>
     <HeaderContent>
         <MudTh>CustomerId</MudTh>
         <MudTh>CustomerPhone</MudTh>
         <MudTh>CustomerName</MudTh>
         <MudTh>CustomerAddress</MudTh>
         <MudTh>CustomerEmail</MudTh>
+        <MudTh>Operations</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="id">@context.CustomerId</MudTd>
@@ -21,6 +34,16 @@
         <MudTd DataLabel="phone">@context.CustomerPhone</MudTd>
         <MudTd DataLabel="email">@context.CustomerEmail</MudTd>
         <MudTd DataLabel="address">@context.CustomerAddress</MudTd>
+        <MudTd>
+
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" 
+            StartIcon="@Icons.Material.Filled.Edit"/>
+
+            <MudButton Color="Color.Error" Variant="Variant.Filled" 
+            StartIcon="@Icons.Material.Filled.Delete"
+            OnClick="()=>Deletecustomer(context)"/>
+
+        </MudTd>
     </RowTemplate>
 </MudTable>
 
@@ -37,5 +60,14 @@
         await Task.Delay(1000);
         Cust = _customerService.GetCustomer();
     }
-   
+
+    public void NavigateToAddCustomer()
+    {
+        NavigationManager.NavigateTo("/customersedit");
+    }
+    public void Deletecustomer(CustomerDesignServices customer)
+    {
+        // Simulate deleting the customer
+        Cust.Remove(customer);
+    }
 }

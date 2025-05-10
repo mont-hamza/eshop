@@ -30,9 +30,26 @@
                 }
             };
         }
-        public Customer updateCustomer( Customer customer) 
-        {
 
+        public CustomerDesignServices GetCustomerById(Guid id)
+        {
+            return new CustomerDesignServices()
+            {
+                CustomerId = Guid.NewGuid(),
+                CustomerName = "name 1",
+                CustomerEmail = "email 1",
+                CustomerPhone = 123456789,
+                CustomerAddress = "address 1",
+            };
         }
+        public Customer save (Customer customer)
+        {
+            return customer;
+        }
+        public Customer updateCustomer( Customer customer) 
+        { 
+            return customer;
+        }
+        public void Delete(Customer customer) { }
     }
 }
