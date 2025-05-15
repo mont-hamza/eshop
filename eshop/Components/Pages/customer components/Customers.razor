@@ -59,6 +59,8 @@
         _loading = true;
         await Task.Delay(1000);
         Cust = _customerService.GetCustomer();
+        _loading = false;
+
     }
 
     public void NavigateToAddCustomer()
