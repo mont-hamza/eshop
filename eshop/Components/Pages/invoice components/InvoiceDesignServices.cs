@@ -5,7 +5,7 @@
         public int InvoiceId { get; private set; }
         public int CustomerId { get; private set; }
 
-        public List <InvoiceDesignServices> GetInvoice()
+        public List <InvoiceDesignServices> GetInvoices()
         {
             return new List<InvoiceDesignServices>
             {

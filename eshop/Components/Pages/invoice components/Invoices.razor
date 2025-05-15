@@ -1,0 +1,54 @@
+﻿@page "/invoices"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Routing
+@inject NavigationManager NavigationManager
+@using eshop.Data.Entities
+@using eshop.Components.Pages.invoice_components
+@inject InvoiceDesignServices _invoiceService
+<h3>Invoices</h3>
+
+<MudTable Items="Invo" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" >
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Invoice Id</MudTh>
+        <MudTh>Customer Id</MudTh>
+
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Invoice Id">@context.InvoiceId</MudTd>
+        <MudTd DataLabel="Customer Id">@context.CustomerId</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Value="hover" Color="Color.Primary">Hover</MudSwitch>
+    <MudSwitch @bind-Value="dense" Color="Color.Secondary">Dense</MudSwitch>
+    <MudSwitch @bind-Value="striped" Color="Color.Tertiary">Striped</MudSwitch>
+    <MudSwitch @bind-Value="bordered" Color="Color.Warning">Bordered</MudSwitch>
+    <MudSpacer />
+    <div style="min-width:200px;">
+        <MudText Class="align-self-center d-inline">Selected1</MudText>
+    </div>
+</div>
+@code {
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+
+    public List<InvoiceDesignServices> Invo { get; set; } = new List<InvoiceDesignServices>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+        Invo = _invoiceService.GetInvoices();
+    }
+}
