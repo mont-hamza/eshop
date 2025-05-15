@@ -16,11 +16,21 @@
     <HeaderContent>
         <MudTh>Invoice Id</MudTh>
         <MudTh>Customer Id</MudTh>
+        <MudTh>Operations</MudTh>
 
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Invoice Id">@context.InvoiceId</MudTd>
         <MudTd DataLabel="Customer Id">@context.CustomerId</MudTd>
+        
+        
+        <MudTd DataLabel="Operations">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" OnClick="NavigateToAddInvoice" />
+            <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" OnClick="()=>DeleteInvoice(context)"/>
+
+        </MudTd>
+
+
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -50,5 +60,13 @@
     {
         await Task.Delay(1000);
         Invo = _invoiceService.GetInvoices();
+    }
+    public void NavigateToAddInvoice()
+    {
+        NavigationManager.NavigateTo("/invoicesedit");
+    }
+    public void DeleteInvoice(InvoiceDesignServices invoice)
+    {
+        Invo.Remove(invoice);
     }
 }

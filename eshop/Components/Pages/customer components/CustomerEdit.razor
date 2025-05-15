@@ -1,7 +1,7 @@
 ﻿@page "/customersedit"
-@page "/customersedit/{id:int}"
+@page "/customersedit/{CustomerId:Guid}"
 @using eshop.Data.Entities
-
+@rendermode InteractiveServer
 <h3>CustomerEdit</h3>
 
 <MudTextField @bind-Value="Customer.CustomerName" Label="Customer Name" />
@@ -12,7 +12,7 @@
 @code {
 
     [Parameter]
-    public Guid Id { get; set; }
+    public Guid CustomerId { get; set; }
 
     private CustomerDesignServices Customer { get; set; } = new CustomerDesignServices();
 
@@ -20,12 +20,15 @@
     {
 
         await Task.Delay(1000);
-
+        Customer = new CustomerDesignServices
+        {
+                CustomerId = Guid.NewGuid(),
+                CustomerName = "John Doe",
+        };
 
     }
     private async Task SaveCustomer()
     {
-        // Simulate saving the customer
         await Task.Delay(1000);
         Console.WriteLine($"Saved Customer: {Customer.CustomerName}");
     }

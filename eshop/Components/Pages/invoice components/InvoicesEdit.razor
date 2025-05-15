@@ -1,0 +1,30 @@
+﻿@page "/invoicesedit"
+@page "/invoicesedit/{InvoiceId:Guid}"
+@using eshop.Data.Entities
+@rendermode InteractiveServer
+@using eshop.Components.Pages.invoice_components
+<h3>InvoicesEdit</h3>
+
+<MudTextField @bind-Value="Invoice.InvoiceId" Label="Invoice Id" />
+<MudTextField @bind-Value="Invoice.CustomerId" Label="Customer Id" />
+<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="SaveInvoice">Save</MudButton>
+
+@code {
+    [Parameter] 
+    public Guid InvoiceId { get; set; }
+    private InvoiceDesignServices Invoice { get; set; } = new InvoiceDesignServices();
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+        Invoice = new InvoiceDesignServices
+            {
+                InvoiceId = Guid.NewGuid(),
+                CustomerId = Guid.NewGuid(),
+            };
+    }
+    private async Task SaveInvoice()
+    {
+        await Task.Delay(1000);
+        Console.WriteLine($"Saved Invoice: {Invoice.InvoiceId}");
+    }
+}

@@ -2,8 +2,8 @@
 {
     public class InvoiceDesignServices
     {
-        public int InvoiceId { get; private set; }
-        public int CustomerId { get; private set; }
+        public Guid InvoiceId { get; set; }
+        public Guid CustomerId { get; set; }
 
         public List <InvoiceDesignServices> GetInvoices()
         {
@@ -11,13 +11,13 @@
             {
                 new InvoiceDesignServices()
                 {
-                    InvoiceId = 1,
-                    CustomerId = 1,
+                    InvoiceId = InvoiceId,
+                    CustomerId = CustomerId,
                 },
                 new InvoiceDesignServices()
                 {
-                    InvoiceId = 2,
-                    CustomerId = 2,
+                    InvoiceId = InvoiceId,
+                    CustomerId = CustomerId,
                 }
             };
         }
@@ -25,8 +25,8 @@
         {
             return new InvoiceDesignServices()
             {
-                InvoiceId = 1,
-                CustomerId = 1,
+                InvoiceId = InvoiceId,
+                CustomerId = CustomerId,
             };
         }
         public Invoice Save(Invoice invoice)
