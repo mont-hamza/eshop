@@ -2,7 +2,11 @@
 {
     public class Invoice
     {
-        public int InvoiceId { get; set; }
-        public int CustomerId { get; set; }
+        
+        public Guid InvoiceId { get; set; }
+        public int CustomerName { get; set; }
+        public string CustomerEmail { get; set; } = string.Empty;
+        public int productId { get; set; }
+        public string productName { get; set; } = string.Empty;
     }
 }

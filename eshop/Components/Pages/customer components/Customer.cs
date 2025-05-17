@@ -9,5 +9,6 @@ namespace eshop.Components.Pages.customer_components
         public string CustomerEmail { get; set; } = string.Empty;
         public int CustomerPhone { get; set; }
         public string CustomerAddress { get; set; } = string.Empty;
+        public Guid InvoiceId { get; set; } = Guid.NewGuid();
     }
 }
