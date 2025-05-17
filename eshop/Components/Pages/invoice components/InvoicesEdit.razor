@@ -6,7 +6,7 @@
 <h3>InvoicesEdit</h3>
 
 <MudTextField @bind-Value="Invoice.InvoiceId" Label="Invoice Id" />
-<MudTextField @bind-Value="Invoice.CustomerId" Label="Customer Id" />
+<MudTextField @bind-Value="Invoice.CustomerName" Label="Customer Name" />
 <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="SaveInvoice">Save</MudButton>
 
 @code {
@@ -19,7 +19,7 @@
         Invoice = new InvoiceDesignServices
             {
                 InvoiceId = Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
+                CustomerName = "John Doe",  
             };
     }
     private async Task SaveInvoice()

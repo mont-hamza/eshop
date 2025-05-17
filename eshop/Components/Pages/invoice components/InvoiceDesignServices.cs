@@ -3,7 +3,11 @@
     public class InvoiceDesignServices
     {
         public Guid InvoiceId { get; set; }
-        public Guid CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerEmail { get; set; }
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; } 
+        public string productName { get; private set; }
 
         public List <InvoiceDesignServices> GetInvoices()
         {
@@ -12,12 +16,18 @@
                 new InvoiceDesignServices()
                 {
                     InvoiceId = InvoiceId,
-                    CustomerId = CustomerId,
+                    CustomerName = CustomerName,
+                    CustomerEmail = "email 1",
+                    ProductId = ProductId,
+                    ProductName = "product 1",
                 },
                 new InvoiceDesignServices()
                 {
                     InvoiceId = InvoiceId,
-                    CustomerId = CustomerId,
+                    CustomerName = CustomerName,
+                    CustomerEmail = "email 1",
+                    ProductId = ProductId,
+                    productName = "product 1",
                 }
             };
         }
@@ -26,7 +36,10 @@
             return new InvoiceDesignServices()
             {
                 InvoiceId = InvoiceId,
-                CustomerId = CustomerId,
+                CustomerName = CustomerName,
+                CustomerEmail = "email 1",
+                ProductId= ProductId,
+                ProductName = "product 1",
             };
         }
         public Invoice Save(Invoice invoice)

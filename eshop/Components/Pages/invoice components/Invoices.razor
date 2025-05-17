@@ -25,15 +25,20 @@
 
     <HeaderContent>
         <MudTh>Invoice Id</MudTh>
-        <MudTh>Customer Id</MudTh>
+        <MudTh>Customer Name</MudTh>
+        <MudTh>CustomerEmail</MudTh>
+        <MudTh>ProductId</MudTh>
+        <MudTh>ProductName</MudTh>
         <MudTh>Operations</MudTh>
+
 
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Invoice Id">@context.InvoiceId</MudTd>
-        <MudTd DataLabel="Customer Id">@context.CustomerId</MudTd>
-        
-        
+        <MudTd DataLabel="Customer Id">@context.CustomerName</MudTd>
+        <MudTd DataLabel="CustomerEmail">@context.CustomerEmail</MudTd>
+        <MudTd DataLabel="ProductId">@context.ProductId</MudTd>
+        <MudTd DataLabel="ProductName">@context.ProductName</MudTd>
         <MudTd DataLabel="Operations">
             <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" OnClick="NavigateToAddInvoice" />
             <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" OnClick="()=>DeleteInvoice(context)"/>
