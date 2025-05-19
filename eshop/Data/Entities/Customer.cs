@@ -1,17 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 namespace eshop.Data.Entities
 {
     public class Customer
     {
-        [MaxLength(10)]
-        [Key]
-        public Guid CustomerId { get; set; }
-        public string CustomerName { get; set; } = string.Empty;
-        public string CustomerEmail { get; set; } = string.Empty;
-        public int CustomerPhone { get; set; }
-        public string CustomerAddress { get; set; } = string.Empty;
-        public Guid InvoiceId { get; set; }
+        
+        
+        public Guid Id { get; set; }
+        [MaxLength(50)]
+        public string? CustomerName { get; set; } 
+        [EmailAddress]
+        public string? CustomerEmail { get; set; }
+        public int? CustomerPhone { get; set; }
+        [MaxLength(100)]
+        public string? CustomerAddress { get; set; } 
+
+        public List<Invoice> ?Invoices { get; set; }
 
     }
 }

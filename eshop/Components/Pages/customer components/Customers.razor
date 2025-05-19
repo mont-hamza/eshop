@@ -30,12 +30,12 @@
         <MudTh>Operations</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="id">@context.CustomerId</MudTd>
+        <MudTd DataLabel="id">@context.Id</MudTd>
         <MudTd DataLabel="name">@context.CustomerName</MudTd>
         <MudTd DataLabel="phone">@context.CustomerPhone</MudTd>
         <MudTd DataLabel="email">@context.CustomerEmail</MudTd>
         <MudTd DataLabel="address">@context.CustomerAddress</MudTd>
-        <MudTd DataLabel="InvoiceId">@context.InvoiceId</MudTd>
+        <MudTd DataLabel="InvoiceId">@context.Invoices</MudTd>
         <MudTd>
 
             <MudButton Color="Color.Primary" Variant="Variant.Filled"
@@ -54,7 +54,7 @@
 
     private bool _loading = false;
 
-    public List<CustomerDesignServices> Cust { get; set; } = new List<CustomerDesignServices>();
+    public List<Customer> Cust { get; set; } = new List<Customer>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,7 +69,7 @@
     {
         NavigationManager.NavigateTo("/customersedit");
     }
-    public void Deletecustomer(CustomerDesignServices customer)
+    public void Deletecustomer(Customer customer)
     {
         // Simulate deleting the customer
         Cust.Remove(customer);

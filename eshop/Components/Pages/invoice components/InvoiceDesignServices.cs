@@ -1,13 +1,14 @@
-﻿namespace eshop.Components.Pages.invoice_components
+﻿using eshop.Data.Entities;
+using System.ComponentModel.DataAnnotations;
+
+namespace eshop.Components.Pages.invoice_components
 {
     public class InvoiceDesignServices
     {
-        public Guid InvoiceId { get; set; }
-        public string CustomerName { get; set; }
-        public string CustomerEmail { get; set; }
-        public Guid ProductId { get; set; }
-        public string ProductName { get; set; } 
-        public string productName { get; private set; }
+        public Guid Id { get; set; }
+        [MaxLength(50)]
+        public Customer? Customer { get; set; }
+        public Guid CustomerId { get; set; }
 
         public List <InvoiceDesignServices> GetInvoices()
         {
@@ -15,19 +16,15 @@
             {
                 new InvoiceDesignServices()
                 {
-                    InvoiceId = InvoiceId,
-                    CustomerName = CustomerName,
-                    CustomerEmail = "email 1",
-                    ProductId = ProductId,
-                    ProductName = "product 1",
+                    Id =Guid.NewGuid(),
+                    Customer = Customer,
+                    CustomerId = CustomerId,
                 },
                 new InvoiceDesignServices()
                 {
-                    InvoiceId = InvoiceId,
-                    CustomerName = CustomerName,
-                    CustomerEmail = "email 1",
-                    ProductId = ProductId,
-                    productName = "product 1",
+                   Id = Guid.NewGuid(),
+                    Customer = Customer,
+                    CustomerId = CustomerId,
                 }
             };
         }
@@ -35,11 +32,9 @@
         {
             return new InvoiceDesignServices()
             {
-                InvoiceId = InvoiceId,
-                CustomerName = CustomerName,
-                CustomerEmail = "email 1",
-                ProductId= ProductId,
-                ProductName = "product 1",
+               Id = Guid.NewGuid(),
+                Customer = Customer,
+                CustomerId = CustomerId,
             };
         }
         public Invoice Save(Invoice invoice)

@@ -6,54 +6,85 @@ namespace eshop.Components.Pages.customer_components
 {
     public class CustomerDesignServices
     {
-
-        [MaxLength(10)]
-        [Key]
-        public Guid CustomerId { get;  set; }
-        [AllowNull]
-        public string CustomerName { get;  set; }
-        [AllowNull]
-        public string CustomerEmail { get;  set; }
-        public int CustomerPhone { get;  set; }
-        [AllowNull]
-        public string CustomerAddress { get;  set; }
-        public Guid InvoiceId { get; set; } = Guid.NewGuid();
-
-        public List<CustomerDesignServices> GetCustomer()
+        public List<Customer> GetCustomer()
         {
-            return new List<CustomerDesignServices>
+            return new List<Customer> 
             {
-                new CustomerDesignServices()
+                new Customer()
                 {
-                    CustomerId = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
                     CustomerName = "name 1",
                     CustomerEmail = "email 1",
                     CustomerPhone = 123456789,
                     CustomerAddress = "address 1",
-                    InvoiceId = Guid.NewGuid(),
+                    Invoices = new List<Invoice>()
+                    {
+                        new()
+                        {
+                            Id = Guid.NewGuid(),
+                            CustomerId = Guid.NewGuid(),
+                            Customer = new Customer()
+                            {
+                                Id = Guid.NewGuid(),
+                                CustomerName = "name 1",
+                                CustomerEmail = "email 1",
+                                CustomerAddress = "address 1",
+                                CustomerPhone = 123456789,
+                            }
+                        }
+                    }
                 },
-                new CustomerDesignServices()
+                new Customer()
                 {
-                    CustomerId = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
                     CustomerName = "name 2",
                     CustomerEmail = "email 2",
                     CustomerAddress = "address 1",
                     CustomerPhone = 123456789,
-                    InvoiceId = Guid.NewGuid(),
+                    Invoices = new List<Invoice>()
+                    {
+                        new()
+                        {
+                            Id = Guid.NewGuid(),
+                            CustomerId = Guid.NewGuid(),
+                            Customer = new Customer()
+                            {
+                                Id = Guid.NewGuid(),
+                                CustomerName = "name 2",
+                                CustomerEmail = "email 2",
+                                CustomerAddress = "address 1",
+                                CustomerPhone = 123456789,
+                            }
+                        }
+                    }
                 }
             };
         }
-
-        public CustomerDesignServices GetCustomerById(Guid id)
+        public Customer GetCustomerById(Guid id)
         {
-            return new CustomerDesignServices()
+            return new Customer()
             {
-                CustomerId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 CustomerName = "name 1",
                 CustomerEmail = "email 1",
                 CustomerPhone = 123456789,
                 CustomerAddress = "address 1",
-                InvoiceId = Guid.NewGuid(),
+                Invoices = new List<Invoice>()
+                {
+                    new()
+                    {
+                        Id = Guid.NewGuid(),
+                        CustomerId = Guid.NewGuid(),
+                        Customer = new Customer()
+                        {
+                            Id = Guid.NewGuid(),
+                            CustomerName = "name 1",
+                            CustomerEmail = "email 1",
+                            CustomerAddress = "address 1",
+                            CustomerPhone = 123456789,
+                        }
+                    }
+                }
             };
         }
         public Customer save (Customer customer)
