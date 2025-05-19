@@ -1,42 +1,59 @@
 ﻿using eshop.Data.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace eshop.Components.Pages.invoice_components
 {
     public class InvoiceDesignServices
     {
-        public Guid Id { get; set; }
-        [MaxLength(50)]
-        public Customer? Customer { get; set; }
-        public Guid CustomerId { get; set; }
-
-        public List <InvoiceDesignServices> GetInvoices()
+        public List <Invoice> GetInvoices()
         {
-            return new List<InvoiceDesignServices>
+            return new List<Invoice>
             {
-                new InvoiceDesignServices()
+                new()
                 {
-                    Id =Guid.NewGuid(),
-                    Customer = Customer,
-                    CustomerId = CustomerId,
+                    Id = Guid.NewGuid(),
+                    Customer = new Customer()
+                    {
+                        Id = Guid.NewGuid(),
+                        CustomerName = "name 1",
+                        CustomerEmail = "email 1",
+                        CustomerPhone = 123456789,
+                        CustomerAddress = "address 1",
+                    },
+                    CustomerId = Guid.NewGuid(),
                 },
-                new InvoiceDesignServices()
+                new()
                 {
-                   Id = Guid.NewGuid(),
-                    Customer = Customer,
-                    CustomerId = CustomerId,
+                    Id = Guid.NewGuid(),
+                    Customer = new Customer()
+                    {
+                        Id = Guid.NewGuid(),
+                        CustomerName = "name 2",
+                        CustomerEmail = "email 2",
+                        CustomerPhone = 123456789,
+                        CustomerAddress = "address 1",
+                    },
+                    CustomerId = Guid.NewGuid(),
+                }
+
+            };
+        }
+        public Invoice GetInvoicebyId(Guid id)
+        {
+            return new Invoice()
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = Guid.NewGuid(),
+                Customer = new Customer()
+                {
+                    Id = Guid.NewGuid(),
+                    CustomerName = "name 1",
+                    CustomerEmail = "email 1",
+                    CustomerPhone = 123456789,
+                    CustomerAddress = "address 1",
                 }
             };
         }
-        public InvoiceDesignServices GetInvoiceById(int id)
-        {
-            return new InvoiceDesignServices()
-            {
-               Id = Guid.NewGuid(),
-                Customer = Customer,
-                CustomerId = CustomerId,
-            };
-        }
+        
         public Invoice Save(Invoice invoice)
         {
             return invoice;

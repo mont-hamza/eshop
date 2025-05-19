@@ -1,5 +1,5 @@
 ﻿@page "/customersedit"
-@page "/customersedit/{CustomerId:Guid}"
+@page "/customersedit/{Id:Guid}"
 @using eshop.Data.Entities
 @using eshop.Components.Pages.customer_components
 @inject NavigationManager NavigationManager
@@ -8,21 +8,16 @@
 
 <MudTextField @bind-Value="Customer.CustomerName" Label="Customer Name" />
 <MudTextField @bind-Value="Customer.Id" Label="Customer Identifiction" />
-<MudTextField @bind-Value="Customer.Invoices" Label="Invoice Id" />
 <MudButton Color="Color.Primary" Variant="Variant.Filled"  @onclick="SaveCustomer" >Save</MudButton>
+<MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="navigateback">Back</MudButton>
 
 
 @code {
 
     [Parameter]
-    public Guid CustomerId { get; set; }
+    public Guid Id { get; set; }
 
     private Customer Customer { get; set; } = new Customer();
-    private async Task navigateback()
-    {
-        await Task.Delay(1000);
-        NavigationManager.NavigateTo("/customers");
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,9 +30,16 @@
         };
 
     }
+
     private async Task SaveCustomer()
     {
         await Task.Delay(1000);
         Console.WriteLine($"Saved Customer: {Customer.CustomerName} {Customer.Id}");
+    }
+
+    private async Task navigateback()
+    {
+        await Task.Delay(1000);
+        NavigationManager.NavigateTo("/customers");
     }
 }

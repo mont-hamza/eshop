@@ -66,7 +66,7 @@
     private bool bordered = false;
     private string searchString1 = "";
 
-    public List<InvoiceDesignServices> Invo { get; set; } = new List<InvoiceDesignServices>();
+    public List<Invoice> Invo { get; set; } = new List<Invoice>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,7 +77,7 @@
     {
         NavigationManager.NavigateTo("/invoicesedit");
     }
-    public void DeleteInvoice(InvoiceDesignServices invoice)
+    public void DeleteInvoice(Invoice invoice)
     {
         Invo.Remove(invoice);
     }

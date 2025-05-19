@@ -1,22 +1,28 @@
 ﻿@page "/invoicesedit"
-@page "/invoicesedit/{InvoiceId:Guid}"
+@page "/invoicesedit/{Id:Guid}"
 @using eshop.Data.Entities
 @rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Routing
+@inject NavigationManager NavigationManager
 @using eshop.Components.Pages.invoice_components
 <h3>InvoicesEdit</h3>
 
 <MudTextField @bind-Value="Invoice.Id" Label="Invoice Id" />
 <MudTextField @bind-Value="Invoice.CustomerId" Label="Customer Id" />
 <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="SaveInvoice">Save</MudButton>
+<MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="navigateback">Back</MudButton>
 
 @code {
     [Parameter] 
-    public Guid InvoiceId { get; set; }
-    private InvoiceDesignServices Invoice { get; set; } = new InvoiceDesignServices();
+    public Guid Id { get; set; }
+
+    private Invoice Invoice { get; set; } = new Invoice();
+
+    
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
-        Invoice = new InvoiceDesignServices
+        Invoice = new Invoice
             {
                 Id = Guid.NewGuid(),
                 CustomerId = Guid.NewGuid(),
@@ -26,5 +32,10 @@
     {
         await Task.Delay(1000);
         Console.WriteLine($"Saved Invoice: {Invoice.Id}");
+    }
+    private async Task navigateback()
+    {
+        await Task.Delay(1000);
+        NavigationManager.NavigateTo("/invoices");
     }
 }

@@ -10,7 +10,7 @@ namespace eshop.Components.Pages.customer_components
         {
             return new List<Customer> 
             {
-                new Customer()
+                new()
                 {
                     Id = Guid.NewGuid(),
                     CustomerName = "name 1",
@@ -34,7 +34,7 @@ namespace eshop.Components.Pages.customer_components
                         }
                     }
                 },
-                new Customer()
+                new()
                 {
                     Id = Guid.NewGuid(),
                     CustomerName = "name 2",
