@@ -22,7 +22,7 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-builder.Services.AddScoped<CustomerDesignServices>();
+builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 builder.Services.AddScoped<InvoiceDesignServices>();
 
 builder.Services.AddAuthentication(options =>
@@ -41,6 +41,7 @@ builder.Services.AddAuthentication(options =>
 // Fix: Declare and initialize 'connectionString' before using it
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString,
     sqlServerOptionsAction: sqlOptions =>
@@ -51,8 +52,7 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
             errorNumbersToAdd: null);
     }));
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)

@@ -1,14 +1,12 @@
 ﻿
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using eshop.Data.Entities;
 namespace eshop.Components.Pages.customer_components
 {
-    public class CustomerDesignServices
+    public class CustomerDesignServices : ICustomerServices
     {
         public List<Customer> GetCustomer()
         {
-            return new List<Customer> 
+            return new List<Customer>
             {
                 new()
                 {
@@ -87,12 +85,12 @@ namespace eshop.Components.Pages.customer_components
                 }
             };
         }
-        public Customer save (Customer customer)
+        public Customer save(Customer customer)
         {
             return customer;
         }
-        public Customer updateCustomer( Customer customer) 
-        { 
+        public Customer updateCustomer(Customer customer)
+        {
             return customer;
         }
         public void Delete(Customer customer) { }

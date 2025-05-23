@@ -1,9 +1,8 @@
 ﻿@page "/customers"
-
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Routing
+@inject ICustomerServices _customerService
 @inject NavigationManager NavigationManager
-@inject CustomerDesignServices _customerService
 @using eshop.Data.Entities
 @using eshop.Components.Pages.customer_components
 <h3>Customers</h3>
