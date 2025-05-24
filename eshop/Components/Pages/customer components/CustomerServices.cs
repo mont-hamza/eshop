@@ -1,32 +1,71 @@
-﻿using eshop.Data.Entities;
+﻿using eshop.Data;
+using eshop.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace eshop.Components.Pages.customer_components
 {
     public class CustomerServices : ICustomerServices
     {
-        public void Delete(Customer customer)
+        private readonly IDbContextFactory<ApplicationDbContext>? _contextFactory;
+
+        public CustomerServices(IDbContextFactory<ApplicationDbContext>? contextFactory)
         {
-            throw new NotImplementedException();
+            _contextFactory = contextFactory;
         }
 
-        public List<Customer> GetCustomer()
+        public Task<List<Customer>> GetCustomer()
         {
-            throw new NotImplementedException();
+            var _DbContext = _contextFactory?.CreateDbContext();
+            return _DbContext.Customers.ToListAsync();
         }
-
-        public Customer GetCustomerById(Guid id)
+        public Task<Customer?> GetCustomerById(Guid id)
         {
-            throw new NotImplementedException();
+            var _DbContext = _contextFactory?.CreateDbContext();
+            return _DbContext.Customers
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
-
-        public Customer save(Customer customer)
+        public async Task<Customer> save(Customer customer)
         {
-            throw new NotImplementedException();
+           var _DbContext = _contextFactory?.CreateDbContext();
+            if (_DbContext == null)
+            {
+                throw new Exception("Database context is not available");
+            }
+            _DbContext.Customers.Add(customer);
+            
+            await _DbContext.SaveChangesAsync();
+            return customer;
         }
-
-        public Customer updateCustomer(Customer customer)
+        public async Task <Customer> updateCustomer(Customer customer)
         {
-            throw new NotImplementedException();
+            var _DbContext = _contextFactory?.CreateDbContext();
+            if (_DbContext == null)
+            {
+                throw new Exception("Database context is not available");
+            }
+            var existingCustomer = await _DbContext.Customers.FindAsync(customer.Id);
+            if (existingCustomer == null)
+            {
+                throw new Exception("Customer not found");
+            }
+            existingCustomer.CustomerName = customer.CustomerName;
+            existingCustomer.CustomerEmail = customer.CustomerEmail;
+            existingCustomer.CustomerPhone = customer.CustomerPhone;
+            existingCustomer.CustomerAddress = customer.CustomerAddress;
+            
+            await _DbContext.SaveChangesAsync();
+            return existingCustomer;
+        }
+        public async Task DeleteAsync(Customer customer)
+        {
+            var _DbContext = _contextFactory?.CreateDbContext();
+            var existingCustomer = _DbContext?.Customers.Find(customer.Id);
+            if (existingCustomer != null)
+            {
+                _DbContext?.Customers.Remove(existingCustomer);
+                await _DbContext.SaveChangesAsync();
+            }
+            
         }
     }
 }

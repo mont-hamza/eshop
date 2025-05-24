@@ -3,6 +3,8 @@
 @using Microsoft.AspNetCore.Components.Routing
 @inject ICustomerServices _customerService
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @using eshop.Data.Entities
 @using eshop.Components.Pages.customer_components
 <h3>Customers</h3>
@@ -38,7 +40,7 @@
         <MudTd>
 
             <MudButton Color="Color.Primary" Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.Edit" OnClick="NavigateToAddCustomer" />
+                       StartIcon="@Icons.Material.Filled.Edit" OnClick="()=>NavigateToAddCustomer(context)" />
 
             <MudButton Color="Color.Error" Variant="Variant.Filled" 
             StartIcon="@Icons.Material.Filled.Delete"
@@ -53,24 +55,32 @@
 
     private bool _loading = false;
 
+
     public List<Customer> Cust { get; set; } = new List<Customer>();
 
     protected override async Task OnInitializedAsync()
     {
         _loading = true;
-        await Task.Delay(1000);
-        Cust = _customerService.GetCustomer();
+        Cust = await _customerService.GetCustomer();
+        Console.WriteLine($"Loaded {Cust.Count} customers");
         _loading = false;
-
     }
 
     public void NavigateToAddCustomer()
     {
         NavigationManager.NavigateTo("/customersedit");
     }
-    public void Deletecustomer(Customer customer)
+
+    public void NavigateToAddCustomer(Customer customer)
     {
-        // Simulate deleting the customer
+        NavigationManager.NavigateTo($"/customersedit/{customer.Id}");
+    }
+
+    public async Task Deletecustomer(Customer customer)
+    {
+        await _customerService.DeleteAsync(customer);
         Cust.Remove(customer);
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add("Customer Deleted Successfully", Severity.Success);
     }
 }

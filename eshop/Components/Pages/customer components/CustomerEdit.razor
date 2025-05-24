@@ -1,45 +1,79 @@
 ﻿@page "/customersedit"
-@page "/customersedit/{Id:Guid}"
-@using eshop.Data.Entities
-@using eshop.Components.Pages.customer_components
-@inject NavigationManager NavigationManager
-@rendermode InteractiveServer
-<h3>CustomerEdit</h3>
+@page "/customersedit/{Id:guid}"
+@using eshop.Data.Entities  
+@inject ICustomerServices _customerService  
+@inject ISnackbar Snackbar  
+@using eshop.Components.Pages.customer_components  
+@using static System.Net.WebRequestMethods
+@inject NavigationManager NavigationManager  
+@rendermode InteractiveServer  
+<h1>@PageHeadertext</h1>  
 
-<MudTextField @bind-Value="Customer.CustomerName" Label="Customer Name" />
-<MudTextField @bind-Value="Customer.Id" Label="Customer Identifiction" />
-<MudButton Color="Color.Primary" Variant="Variant.Filled"  @onclick="SaveCustomer" >Save</MudButton>
-<MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="navigateback">Back</MudButton>
-
+<MudTextField Value="@(Customer.Id.ToString())" Label="Customer Identification" Disabled="true" />
+<MudTextField @bind-Value="Customer.CustomerName" Label="Customer Name" />  
+<MudTextField @bind-Value="Customer.CustomerPhone" Label="Customer Phone" />  
+<MudTextField @bind-Value="Customer.CustomerAddress" Label="Customer Address" />  
+<MudTextField @bind-Value="Customer.CustomerEmail" Label="Customer Email" />  
+<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="SaveChangesCustomer">Save</MudButton>  
+<MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="navigateback">Back</MudButton>  
 
 @code {
 
-    [Parameter]
-    public Guid Id { get; set; }
+    [Parameter] public Guid Id { get; set; }  
 
-    private Customer Customer { get; set; } = new Customer();
+    private Customer Customer { get; set; } = new Customer();  
+    private string PageHeadertext { get; set; } = string.Empty; // Added declaration for PageHeadertext  
 
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync()  
+    {  
+        await Task.Delay(1000); // Simulate a delay for loading data
+        if (Id != Guid.Empty)  
+        {  
+            PageHeadertext = "Edit Customer"; // Set the header text for editing  
+            Customer = await _customerService.GetCustomerById(Id);// Fetch the customer details by ID
+            if (Customer == null)  
+            {  
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add("Customer not found!", Severity.Error);  
+                NavigationManager.NavigateTo("/customers"); // Redirect if customer not found  
+            }
+            else
+            {  
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add("Customer loaded successfully!", Severity.Success);  
+            }
+        }  
+        else  
+        {  
+            PageHeadertext = "Add Customer"; // Set the header text for adding  
+            Customer = new Customer(); // Initialize a new customer if no ID is provided  
+        }  
+    }  
 
-        await Task.Delay(1000);
-        Customer = new Customer
-        {
-                Id = Guid.NewGuid(),
-                CustomerName = "John Doe",
-        };
+    private async Task SaveChangesCustomer()  
+    {  
+        await Task.Delay(1000);  
 
-    }
+        if (Id != Guid.Empty)  
+        {  
+            Customer.Id = Id; // If an ID is provided, use it
+            _customerService.updateCustomer(Customer);
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add("Customer updated successfully!", Severity.Success);
+        }  
+        else  
+        {  
+            Customer.Id = Guid.NewGuid(); // Generate a new ID if not provided  
+            _customerService.save(Customer);
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter; // Set the snackbar variant to Filled
+            Snackbar.Add("Customer saved successfully!", Severity.Success);
+        }  
+        
+    }  
 
-    private async Task SaveCustomer()
-    {
-        await Task.Delay(1000);
-        Console.WriteLine($"Saved Customer: {Customer.CustomerName} {Customer.Id}");
-    }
-
-    private async Task navigateback()
-    {
-        await Task.Delay(1000);
-        NavigationManager.NavigateTo("/customers");
-    }
+    private async Task navigateback()  
+    {  
+        await Task.Delay(1000);  
+        NavigationManager.NavigateTo("/customers");  
+    }  
 }

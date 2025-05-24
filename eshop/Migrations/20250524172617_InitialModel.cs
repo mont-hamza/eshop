@@ -56,9 +56,9 @@ namespace eshop.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    CustomerEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CustomerEmail = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CustomerPhone = table.Column<int>(type: "int", nullable: true),
-                    CustomerAddress = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                    CustomerAddress = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
                 },
                 constraints: table =>
                 {
