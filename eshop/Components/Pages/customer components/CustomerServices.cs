@@ -16,7 +16,9 @@ namespace eshop.Components.Pages.customer_components
         public Task<List<Customer>> GetCustomer()
         {
             var _DbContext = _contextFactory?.CreateDbContext();
-            return _DbContext.Customers.ToListAsync();
+            return _DbContext.Customers
+                .Include(c => c.Invoices)
+                .ToListAsync();
         }
         public Task<Customer?> GetCustomerById(Guid id)
         {
@@ -26,17 +28,17 @@ namespace eshop.Components.Pages.customer_components
         }
         public async Task<Customer> save(Customer customer)
         {
-           var _DbContext = _contextFactory?.CreateDbContext();
+            var _DbContext = _contextFactory?.CreateDbContext();
             if (_DbContext == null)
             {
                 throw new Exception("Database context is not available");
             }
             _DbContext.Customers.Add(customer);
-            
+
             await _DbContext.SaveChangesAsync();
             return customer;
         }
-        public async Task <Customer> updateCustomer(Customer customer)
+        public async Task<Customer> updateCustomer(Customer customer)
         {
             var _DbContext = _contextFactory?.CreateDbContext();
             if (_DbContext == null)
@@ -52,7 +54,7 @@ namespace eshop.Components.Pages.customer_components
             existingCustomer.CustomerEmail = customer.CustomerEmail;
             existingCustomer.CustomerPhone = customer.CustomerPhone;
             existingCustomer.CustomerAddress = customer.CustomerAddress;
-            
+
             await _DbContext.SaveChangesAsync();
             return existingCustomer;
         }
@@ -71,5 +73,6 @@ namespace eshop.Components.Pages.customer_components
             }
 
         }
+        
     }
 }

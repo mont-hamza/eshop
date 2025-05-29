@@ -27,7 +27,7 @@
         <MudTh>CustomerPhone</MudTh>
         <MudTh>CustomerAddress</MudTh>
         <MudTh>CustomerEmail</MudTh>
-        <MudTh>InvoiceId</MudTh>
+        <MudTh>Invoices</MudTh>
         <MudTh>Operations</MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -36,16 +36,27 @@
         <MudTd DataLabel="phone">@context.CustomerPhone</MudTd>
         <MudTd DataLabel="email">@context.CustomerEmail</MudTd>
         <MudTd DataLabel="address">@context.CustomerAddress</MudTd>
-        <MudTd DataLabel="InvoiceId">@context.Invoices</MudTd>
+        <MudTd DataLabel="Invoices">
+            @if (context.Invoices != null && context.Invoices.Any())
+            {
+                <MudSelect T="Guid" Label="Invoices" Dense="true" Disabled="false">
+                    @foreach (var invoice in context.Invoices)
+                    {
+                        <MudSelectItem Value="@invoice.Id">@invoice.Id</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            else
+            {
+                <MudText Color="Color.Secondary" Typo="Typo.caption">No invoices</MudText>
+            }
+        </MudTd>
         <MudTd>
-
             <MudButton Color="Color.Primary" Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Edit" OnClick="()=>NavigateToAddCustomer(context)" />
-
-            <MudButton Color="Color.Error" Variant="Variant.Filled" 
-            StartIcon="@Icons.Material.Filled.Delete"
-            OnClick="()=>Deletecustomer(context)"/>
-
+            <MudButton Color="Color.Error" Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Delete"
+                       OnClick="()=>Deletecustomer(context)" />
         </MudTd>
     </RowTemplate>
 </MudTable>
@@ -55,8 +66,7 @@
 
     private bool _loading = false;
 
-
-    public List<Customer> Cust { get; set; } = new List<Customer>();
+    private List<Customer> Cust { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {

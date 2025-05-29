@@ -48,6 +48,7 @@
         await Task.Delay(1000); // Simulate a delay for loading data
         if (Id != Guid.Empty)
         {
+            PageHeadertext = "Edit Invoice";
             Invoice = await _invoiceService.GetInvoicebyId(Id); // Fetch the invoice details by ID
             if (Invoice == null)
             {
@@ -67,6 +68,7 @@
         }
         else
         {
+            PageHeadertext = "Add Invoice"; 
             Invoice = new Invoice
             {
                 Customer = new Customer() // Ensure Customer is not null
