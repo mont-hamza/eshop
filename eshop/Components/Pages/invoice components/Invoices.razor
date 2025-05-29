@@ -2,10 +2,12 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Routing
 @inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @using eshop.Data.Entities
 @using eshop.Components.Pages.invoice_components
-@inject InvoiceDesignServices _invoiceService
-<h3>Invoices</h3>
+@inject IInvoiceServices _invoiceService
+<h1>Invoices</h1>
 
 <MudTable Items="Invo" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" >
 
@@ -27,17 +29,18 @@
         <MudTh>Invoice Id</MudTh>
         <MudTh>Customer Name</MudTh>
         <MudTh>Customer Id</MudTh>
+        <MudTh>Customer Email</MudTh>
         <MudTh>Operations</MudTh>
 
 
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Invoice Id">@context.Id</MudTd>
-        <MudTd DataLabel="Customer Name">@context.Customer</MudTd>
+        <MudTd DataLabel="Customer Name">@context.Customer?.CustomerName</MudTd>
         <MudTd DataLabel="Customer Id">@context.CustomerId</MudTd>
-
+        <MudTd DataLabel="Customer Email">@context.Customer?.CustomerEmail</MudTd>
         <MudTd DataLabel="Operations">
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" OnClick="NavigateToAddInvoice" />
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" OnClick="()=>NavigateToAddInvoice(context)" />
             <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" OnClick="()=>DeleteInvoice(context)"/>
 
         </MudTd>
@@ -71,14 +74,25 @@
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(1000);
-        Invo = _invoiceService.GetInvoices();
+        Invo = await _invoiceService.GetInvoices();
     }
+
     public void NavigateToAddInvoice()
     {
         NavigationManager.NavigateTo("/invoicesedit");
     }
-    public void DeleteInvoice(Invoice invoice)
+
+    public void NavigateToAddInvoice(Invoice invoice)
     {
+        NavigationManager.NavigateTo($"/invoicesedit/{invoice.Id}");
+    }
+
+    public async Task DeleteInvoice(Invoice invoice)
+    {
+        await _invoiceService.DeleteAsync(invoice);
         Invo.Remove(invoice);
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add("Invoice deleted successfully", Severity.Success);
+
     }
 }

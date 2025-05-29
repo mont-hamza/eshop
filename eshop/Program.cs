@@ -1,12 +1,15 @@
 using eshop.Components;
 using eshop.Components.Account;
+using eshop.Data;
+using eshop.Data.Entities;
 using eshop.Components.Pages.customer_components;
 using eshop.Components.Pages.invoice_components;
-using eshop.Data;
+
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,21 +25,17 @@ builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 
-builder.Services.AddScoped<ICustomerServices, CustomerServices>();
-builder.Services.AddScoped<InvoiceDesignServices>();
 
+builder.Services.AddScoped<ICustomerServices, CustomerServices>();
+builder.Services.AddScoped<IInvoiceServices, InvoiceServices>();
 builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
     .AddIdentityCookies();
 
-
-
-// Fix: Declare and initialize 'connectionString' before using it
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
 
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString,
@@ -60,12 +59,6 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    ApplicationDbContextSeed.SeedAsync(dbContext).GetAwaiter().GetResult();
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -79,6 +72,7 @@ else
 }
 
 app.UseHttpsRedirection();
+
 
 app.UseAntiforgery();
 

@@ -65,7 +65,11 @@ namespace eshop.Components.Pages.customer_components
                 _DbContext?.Customers.Remove(existingCustomer);
                 await _DbContext.SaveChangesAsync();
             }
-            
+            else
+            {
+                throw new Exception("Customer not found");
+            }
+
         }
     }
 }

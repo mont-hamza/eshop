@@ -1,6 +1,7 @@
 using eshop.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor;
 
 namespace eshop.Data
 {
@@ -44,32 +45,5 @@ namespace eshop.Data
             });
         }
     }
-    public static class ApplicationDbContextSeed
-    {
-        public static async Task SeedAsync(ApplicationDbContext context)
-        {
-            if (!context.Customers.Any())
-            {
-                context.Customers.AddRange(
-                    new Customer
-                    {
-                        Id = Guid.NewGuid(),
-                        CustomerName = "Alice Smith",
-                        CustomerEmail = "alice@example.com",
-                        CustomerPhone = 1234567890,
-                        CustomerAddress = "123 Main St"
-                    },
-                    new Customer
-                    {
-                        Id = Guid.NewGuid(),
-                        CustomerName = "Bob Johnson",
-                        CustomerEmail = "bob@example.com",
-                        CustomerPhone = 123443210,
-                        CustomerAddress = "456 Elm St"
-                    }
-                );
-                await context.SaveChangesAsync();
-            }
-        }
-    }
+    
 }

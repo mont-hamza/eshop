@@ -1,10 +1,10 @@
 ﻿@page "/customersedit"
 @page "/customersedit/{Id:guid}"
 @using eshop.Data.Entities  
+@using eshop.Components.Pages.customer_components
+@using static System.Net.WebRequestMethods
 @inject ICustomerServices _customerService  
 @inject ISnackbar Snackbar  
-@using eshop.Components.Pages.customer_components  
-@using static System.Net.WebRequestMethods
 @inject NavigationManager NavigationManager  
 @rendermode InteractiveServer  
 <h1>@PageHeadertext</h1>  
@@ -57,18 +57,18 @@
         if (Id != Guid.Empty)  
         {  
             Customer.Id = Id; // If an ID is provided, use it
-            _customerService.updateCustomer(Customer);
+            await _customerService.updateCustomer(Customer);
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
             Snackbar.Add("Customer updated successfully!", Severity.Success);
         }  
         else  
         {  
             Customer.Id = Guid.NewGuid(); // Generate a new ID if not provided  
-            _customerService.save(Customer);
+            await _customerService.save(Customer);
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter; // Set the snackbar variant to Filled
             Snackbar.Add("Customer saved successfully!", Severity.Success);
         }  
-        
+        NavigationManager.NavigateTo("/customers");
     }  
 
     private async Task navigateback()  

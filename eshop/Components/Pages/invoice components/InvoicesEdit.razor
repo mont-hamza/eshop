@@ -1,15 +1,36 @@
 ﻿@page "/invoicesedit"
-@page "/invoicesedit/{Id:Guid}"
+@page "/invoicesedit/{Id:guid}"
+@using eshop.Components.Pages.customer_components
 @using eshop.Data.Entities
-@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Routing
-@inject NavigationManager NavigationManager
 @using eshop.Components.Pages.invoice_components
-<h3>InvoicesEdit</h3>
+@inject IInvoiceServices _invoiceService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject ICustomerServices _customerService
+@rendermode InteractiveServer
 
-<MudTextField @bind-Value="Invoice.Id" Label="Invoice Id" />
-<MudTextField @bind-Value="Invoice.CustomerId" Label="Customer Id" />
-<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="SaveInvoice">Save</MudButton>
+<h1>@PageHeadertext</h1>
+
+
+<MudTextField Value="@(Invoice.Id.ToString())" Label="Invoice Identification" Disabled="true" />
+<MudSelect T="Guid" Label="Select Customer" @bind-Value="Invoice.CustomerId" Required="true">
+    @if (Customers != null)
+    {
+        @foreach (var customer in Customers)
+        {
+            <MudSelectItem Value="@(customer.Id)">
+                @($"{customer.CustomerName} ({customer.CustomerEmail})")
+            </MudSelectItem>
+        }
+    }
+</MudSelect>
+@if (SelectedCustomer != null)
+{
+    <MudTextField Value="SelectedCustomer.CustomerName" Label="Customer Name" Disabled="true" />
+    <MudTextField Value="SelectedCustomer.CustomerEmail" Label="Customer Email" Disabled="true" />
+}
+<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="SaveChangesInvoice">Save</MudButton>
 <MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="navigateback">Back</MudButton>
 
 @code {
@@ -17,22 +38,61 @@
     public Guid Id { get; set; }
 
     private Invoice Invoice { get; set; } = new Invoice();
+    private string PageHeadertext { get; set; } = string.Empty; // Added declaration for PageHeadertext
+    private List<Customer> Customers { get; set; } = new();
+    private Customer? SelectedCustomer => Customers.FirstOrDefault(c => c.Id == Invoice.CustomerId);
 
-    
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(1000);
-        Invoice = new Invoice
+        Customers = await _customerService.GetCustomer();
+        await Task.Delay(1000); // Simulate a delay for loading data
+        if (Id != Guid.Empty)
+        {
+            Invoice = await _invoiceService.GetInvoicebyId(Id); // Fetch the invoice details by ID
+            if (Invoice == null)
             {
-                Id = Guid.NewGuid(),
-                CustomerId = Guid.NewGuid(),
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add("Invoice not found!", Severity.Error);
+                NavigationManager.NavigateTo("/invoices"); // Redirect if invoice not found
+            }
+            else
+            {
+                // Ensure Customer is not null
+                if (Invoice.Customer == null)
+                    Invoice.Customer = new Customer();
+
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add("Invoice loaded successfully!", Severity.Success);
+            }
+        }
+        else
+        {
+            Invoice = new Invoice
+            {
+                Customer = new Customer() // Ensure Customer is not null
             };
+        }
     }
-    private async Task SaveInvoice()
+
+    private async Task SaveChangesInvoice()
     {
         await Task.Delay(1000);
-        Console.WriteLine($"Saved Invoice: {Invoice.Id}");
+        Invoice.Customer = null; // Ensure only CustomerId is set
+        if (Id != Guid.Empty)
+        {
+            Invoice.Id = Id;
+            await _invoiceService.UpdateInvoice(Invoice);
+            Snackbar.Add("Invoice updated successfully!", Severity.Success);
+        }
+        else
+        {
+            Invoice.Id = Guid.NewGuid();
+            await _invoiceService.Save(Invoice);
+            Snackbar.Add("Invoice added successfully!", Severity.Success);
+        }
+        NavigationManager.NavigateTo("/invoices");
     }
+
     private async Task navigateback()
     {
         await Task.Delay(1000);

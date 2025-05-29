@@ -1,12 +1,12 @@
 ﻿@page "/customers"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Routing
+@using eshop.Data.Entities
+@using eshop.Components.Pages.customer_components
 @inject ICustomerServices _customerService
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
-@using eshop.Data.Entities
-@using eshop.Components.Pages.customer_components
 <h3>Customers</h3>
 
 
@@ -62,7 +62,6 @@
     {
         _loading = true;
         Cust = await _customerService.GetCustomer();
-        Console.WriteLine($"Loaded {Cust.Count} customers");
         _loading = false;
     }
 
