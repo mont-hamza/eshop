@@ -14,6 +14,7 @@ namespace eshop.Data
         }
         public DbSet<Customer> Customers { get; set; } = default!;
         public DbSet<Invoice> Invoices { get; set; } = default!;
+        public DbSet<Product> Products { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

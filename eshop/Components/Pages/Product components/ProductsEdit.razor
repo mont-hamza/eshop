@@ -1,0 +1,70 @@
+﻿@page "/productsedit"
+@page "/productsedit/{id:guid}"
+@rendermode InteractiveServer
+@using eshop.Data.Entities
+@using eshop.Components.Pages.Product_components
+@inject IProductServices _productService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+
+<h3>@PageHeadertext</h3
+
+
+<MudTextField Value="@(Product.Id.ToString())" Label="Product Identification" Disabled="true" />
+<MudTextField @bind-Value="Product.Name" Label="Product Name" Required="true" RequiredError="Product Name is required." />
+<MudTextField @bind-Value="Product.Price" Label="Product Price" Type="number" Required="true" RequiredError="Product Price is required." />
+
+<MudTextField @bind-Value="Product.Description" Label="Product Description" Required="true" RequiredError="Product Description is required." />
+<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="SaveChangesProduct">Save</MudButton>
+<MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="NavigateBack">Back</MudButton>
+
+@code {
+    [Parameter] public Guid Id { get; set; } = Guid.Empty;
+    private Product Product { get; set; } = new Product();
+    private string PageHeadertext { get; set; } = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000); // Simulate a delay for loading data
+        if (Id != Guid.Empty)
+        {
+            PageHeadertext = "Edit Product";
+            Product = await _productService.GetProductById(Id);
+            if (Product == null)
+            {
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add("Product not found!", Severity.Error);
+                NavigationManager.NavigateTo("/browse");
+            }
+            else
+            {
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+                Snackbar.Add("Product loaded successfully!", Severity.Success);
+            }
+        }
+        else
+        {
+            PageHeadertext = "Add Product";
+            Product = new Product(); // Initialize a new product if no ID is provided
+        }
+    }
+    private async Task SaveChangesProduct()
+    {
+        await Task.Delay(1000);
+        if (Id != Guid.Empty)
+        {
+            Product.Id = Id; // If an ID is provided, use it
+            await _productService.UpdateProduct(Product);
+        }
+        else
+        {
+            await _productService.SaveProduct(Product);
+        }
+        Snackbar.Add("Product saved successfully!", Severity.Success);
+        NavigationManager.NavigateTo("/browse");
+    }
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/browse");
+    }
+
+}
