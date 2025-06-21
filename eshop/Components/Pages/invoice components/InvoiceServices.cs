@@ -78,5 +78,13 @@ namespace eshop.Components.Pages.invoice_components
             await _DbContext.SaveChangesAsync();
 
         }
+        public Task<List<Invoice>> GetInvoicesByCustomerId(Guid customerId)
+        {
+            var _DbContext = _contextFactory?.CreateDbContext();
+            return _DbContext.Invoices
+                .Where(i => i.CustomerId == customerId)
+                .Include(i => i.Customer) // Include Customer data
+                .ToListAsync();
+        }
     }
 }
