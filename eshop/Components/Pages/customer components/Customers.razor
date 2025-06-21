@@ -135,10 +135,11 @@
     }  
 
     private async Task NavigateToInvoices(Customer customer)  
-    {  
-        if (customer.Invoices != null && customer.Invoices.Any())  
-        {  
-            var parameters = new DialogParameters { ["Invoices"] = customer.Invoices };  
+    {
+        var invoices = await _invoiceService.GetInvoicesByCustomerId(customer.Id);
+        if (invoices != null && invoices.Any())
+        {
+            var parameters = new DialogParameters { ["Invoices"] = invoices };
             var options = new DialogOptions {  
                 CloseButton = true,  
                 MaxWidth = MaxWidth.Medium,  
@@ -146,21 +147,16 @@
                 Position = DialogPosition.Center,  
                 NoHeader = true,  
                 BackdropClick = true,  
-                CloseOnEscapeKey = true ,  
-                BackgroundClass = "my-custom-class"  
-            };  
-            var dialog = DialogService.Show<Invoices>("View Invoices", parameters, options);  
+                CloseOnEscapeKey = true , 
+                BackgroundClass = "my-custom-class"
+            };
+            var dialog = DialogService.Show<Invoices>("Customer Invoices", parameters, options);
             var result = await dialog.Result;
-            if (result.Data != null) // Check if the dialog returned data  
-            {  
-                Invo = await _invoiceService.GetInvoicesByCustomerId(customer.Id);
-                StateHasChanged();  
-            }
-        }  
-        else  
-        {  
-            Snackbar.Add("No invoices available for this customer.", Severity.Warning);  
-        }  
+        }
+        else
+        {
+            Snackbar.Add("No invoices available for this customer.", Severity.Warning);
+        }
     }
 
     public async Task Deletecustomer(Customer customer)

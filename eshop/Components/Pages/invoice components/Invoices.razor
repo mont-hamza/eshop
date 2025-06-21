@@ -70,13 +70,18 @@
     private string searchString1 = "";
     private bool loading = false;
 
+    [Parameter] 
+    public List<Invoice> Invoice { get; set; }
     public List<Invoice> Invo { get; set; } = new List<Invoice>();
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         await Task.Delay(1000);
-        Invo = await _invoiceService.GetInvoices();
+        if (Invoice != null && Invoice.Any())
+            Invo = Invoice;
+        else
+            Invo = await _invoiceService.GetInvoices();
         loading = false;
     }
 
