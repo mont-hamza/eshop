@@ -96,7 +96,6 @@
 
     private async Task NavigateToAddCustomer()
     {
-        var parameters = new DialogParameters { ["Id"] = Guid.Empty };
         var options = new DialogOptions {  
             CloseButton = true,  
             MaxWidth = MaxWidth.Medium,  
@@ -107,7 +106,7 @@
             CloseOnEscapeKey = true , 
             BackgroundClass = "my-custom-class"
         };
-        var dialog = DialogService.Show<CustomerEdit>("Add Customer", parameters, options);
+        var dialog = DialogService.Show<CustomerEdit>("Add Customer", options);
         var result = await dialog.Result;
         if(result.Data != null) // Check if the dialog returned data  
         {  
