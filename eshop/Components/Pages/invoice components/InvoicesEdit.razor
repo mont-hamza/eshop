@@ -13,7 +13,6 @@
 <h1>@PageHeadertext</h1>
 
 
-<MudTextField Value="@(Invoice.Id.ToString())" Label="Invoice Identification" Disabled="true" />
 <MudSelect T="Guid" Label="Select Customer" @bind-Value="Invoice.CustomerId" Required="true">
     @if (Customers != null)
     {

@@ -15,7 +15,7 @@
 <MudTable Items="Cust" Dense="@dense" Bordered="@bordered" Striped="@striped" Hover="@hover" Loading="@_loading" LoadingProgressColor="Color.Info">
      <ToolBarContent>
          <MudSpacer />
-        <MudButton Color="Color.Primary" 
+        <MudButton Color="Color.Transparent" 
         Variant="Variant.Filled" 
         StartIcon="@Icons.Material.Filled.Add"
          @onclick="NavigateToAddCustomer">
@@ -24,7 +24,6 @@
 
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>CustomerId</MudTh>
         <MudTh>CustomerName</MudTh>
         <MudTh>CustomerPhone</MudTh>
         <MudTh>CustomerAddress</MudTh>
@@ -33,11 +32,10 @@
         <MudTh>Operations</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="id">@context.Id</MudTd>
         <MudTd DataLabel="name">@context.CustomerName</MudTd>
         <MudTd DataLabel="phone">@context.CustomerPhone</MudTd>
-        <MudTd DataLabel="email">@context.CustomerEmail</MudTd>
         <MudTd DataLabel="address">@context.CustomerAddress</MudTd>
+        <MudTd DataLabel="email">@context.CustomerEmail</MudTd>
         <MudTd DataLabel="Invoices">
             <MudButton color="Color.Primary" Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.List"
@@ -46,7 +44,7 @@
             </MudButton>
         </MudTd>
         <MudTd>
-            <MudButton Color="Color.Primary" Variant="Variant.Filled"
+            <MudButton Color="Color.Dark" Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.Edit"
                        OnClick="() => OpenEditDialog(context)" />
             <MudButton Color="Color.Error" Variant="Variant.Filled"
@@ -76,7 +74,7 @@
     private bool dense = true;
     private bool hover = true;
     private bool striped = false;
-    private bool bordered = false;
+    private bool bordered = true;
     private bool _loading = false;
 
     private List<Customer> Cust { get; set; } = new();
