@@ -1,0 +1,52 @@
+@using eshop.Data.Entities
+@inject IInvoiceServices InvoiceService
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@rendermode InteractiveServer
+@page "/invoicesdialog/{CustomerId:guid}"
+@page "/invoicesdialog"
+
+
+<MudDialog>
+    <DialogContent>
+        <MudTable Items="Invo" Dense="true" Hover="true" Bordered="true" Striped="true" Loading="@loading">
+            <HeaderContent>
+                <MudTh>Customer Name</MudTh>
+                <MudTh>Customer Email</MudTh>
+                <MudTh>Operations</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>@context.Customer?.CustomerName</MudTd>
+                <MudTd>@context.Customer?.CustomerEmail</MudTd>
+                <MudTd>
+                    <MudButton Color="Color.Dark" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" OnClick="()=>NavigateToEditInvoice(context)" />
+                    
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+        @if (!loading && (Invo == null || !Invo.Any()))
+        {
+            <MudText>No invoices found for this customer.</MudText>
+        }
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter] public Guid CustomerId { get; set; }
+
+    private List<Invoice> Invo = new();
+    private bool loading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        Invo = await InvoiceService.GetInvoicesByCustomerId(CustomerId);
+        loading = false;
+    }
+    private void NavigateToEditInvoice(Invoice invoice)
+    {
+        NavigationManager.NavigateTo($"/invoicesedit/{invoice.Id}");
+    }
+    
+}

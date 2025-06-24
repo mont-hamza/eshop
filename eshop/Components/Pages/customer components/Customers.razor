@@ -37,9 +37,9 @@
         <MudTd DataLabel="address">@context.CustomerAddress</MudTd>
         <MudTd DataLabel="email">@context.CustomerEmail</MudTd>
         <MudTd DataLabel="Invoices">
-            <MudButton color="Color.Primary" Variant="Variant.Filled"
+            <MudButton color="Color.Transparent" Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.List"
-                       OnClick="() => NavigateToInvoices(context)" >
+                       OnClick="() => NavigateToInvoices(context)">
                 View Invoices
             </MudButton>
         </MudTd>
@@ -133,13 +133,26 @@
 
     private async Task NavigateToInvoices(Customer customer)
     {
-        if (customer?.Id != null)
+        var invoices = await _invoiceService.GetInvoicesByCustomerId(customer.Id);
+        if (invoices != null && invoices.Any())
         {
-            NavigationManager.NavigateTo($"/invoices?customerId={customer.Id}");
+            var parameters = new DialogParameters { ["CustomerId"] = customer.Id };
+            var options = new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                Position = DialogPosition.Center,
+                NoHeader = true,
+                BackdropClick = true,
+                CloseOnEscapeKey = true,
+                BackgroundClass = "my-custom-class"
+            };
+            DialogService.Show<InvoicesDialog>("Customer Invoices", parameters, options);
         }
         else
         {
-            Snackbar.Add("Customer ID is missing.", Severity.Error);
+            Snackbar.Add("No invoices available for this customer.", Severity.Warning);
         }
     }
 
