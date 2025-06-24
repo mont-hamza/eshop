@@ -4,6 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@using Microsoft.AspNetCore.WebUtilities
 @using eshop.Data.Entities
 @using eshop.Components.Pages.invoice_components
 @inject IInvoiceServices _invoiceService
@@ -36,7 +37,7 @@
         <MudTd DataLabel="Customer Name">@context.Customer?.CustomerName</MudTd>
         <MudTd DataLabel="Customer Email">@context.Customer?.CustomerEmail</MudTd>
         <MudTd DataLabel="Operations">
-            <MudButton Color="Color.Dark" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" OnClick="()=>NavigateToAddInvoice(context)" />
+            <MudButton Color="Color.Dark" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Edit" OnClick="()=>NavigateToEditInvoice(context)" />
             <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" OnClick="()=>DeleteInvoice(context)"/>
 
         </MudTd>
@@ -67,17 +68,25 @@
     private bool loading = false;
 
     [Parameter] 
-    public List<Invoice> Invoice { get; set; }
     public List<Invoice> Invo { get; set; } = new List<Invoice>();
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         await Task.Delay(1000);
-        if (Invoice != null && Invoice.Any())
-            Invo = Invoice;
+
+        // Get customerId from query string
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = QueryHelpers.ParseQuery(uri.Query);
+        if (query.TryGetValue("customerId", out var customerIdString) && Guid.TryParse(customerIdString, out var customerId))
+        {
+            Invo = await _invoiceService.GetInvoicesByCustomerId(customerId);
+        }
         else
+        {
             Invo = await _invoiceService.GetInvoices();
+        }
+
         loading = false;
     }
 
@@ -86,7 +95,7 @@
         NavigationManager.NavigateTo("/invoicesedit");
     }
 
-    public void NavigateToAddInvoice(Invoice invoice)
+    public void NavigateToEditInvoice(Invoice invoice)
     {
         NavigationManager.NavigateTo($"/invoicesedit/{invoice.Id}");
     }

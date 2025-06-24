@@ -5,7 +5,7 @@
 namespace eshop.Migrations
 {
     /// <inheritdoc />
-    public partial class ProductsmodI : Migration
+    public partial class AddProductsTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

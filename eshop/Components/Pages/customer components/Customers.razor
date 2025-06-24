@@ -39,7 +39,7 @@
         <MudTd DataLabel="Invoices">
             <MudButton color="Color.Primary" Variant="Variant.Filled"
                        StartIcon="@Icons.Material.Filled.List"
-                       OnClick="() => NavigateToInvoices(context)">
+                       OnClick="() => NavigateToInvoices(context)" >
                 View Invoices
             </MudButton>
         </MudTd>
@@ -76,6 +76,7 @@
     private bool striped = false;
     private bool bordered = true;
     private bool _loading = false;
+    private bool _disposed;
 
     private List<Customer> Cust { get; set; } = new();
     private List<Invoice> Invo { get; set; } = new();
@@ -104,14 +105,17 @@
         if(result.Data != null) // Check if the dialog returned data  
         {  
             Cust = await _customerService.GetCustomer();  
-            StateHasChanged();  
+            if (!_disposed)
+            {
+                StateHasChanged();
+            }
         }
     }
 
     private async Task OpenEditDialog(Customer customer)  
     {  
-            var parameters = new DialogParameters { ["Id"] = customer.Id };
-            var options = new DialogOptions {  
+        var parameters = new DialogParameters { ["Id"] = customer.Id };
+        var options = new DialogOptions {  
                 CloseButton = true,  
                 MaxWidth = MaxWidth.Medium,  
                 FullWidth = true,  
@@ -121,47 +125,35 @@
                 CloseOnEscapeKey = true , 
                 BackgroundClass = "my-custom-class"
             };
-            var dialog = DialogService.Show<CustomerEdit>("Edit Customer", parameters, options);  
-            var result = await dialog.Result;  
-
-            // Optionally refresh the list if changes were made  
-            if (result.Data != null) // Check if the dialog returned data  
-            {  
-                Cust = await _customerService.GetCustomer();  
-                StateHasChanged();  
-            }  
+        IDialogReference dialogReference1 = DialogService.Show<CustomerEdit>("Edit Customer", parameters, options);
+        IDialogReference dialogReference = dialogReference1;
+        var dialog = dialogReference;  
+        var result = await dialog.Result;  
     }  
 
-    private async Task NavigateToInvoices(Customer customer)  
+    private async Task NavigateToInvoices(Customer customer)
     {
-        var invoices = await _invoiceService.GetInvoicesByCustomerId(customer.Id);
-        if (invoices != null && invoices.Any())
+        if (customer?.Id != null)
         {
-            var parameters = new DialogParameters { ["Invoices"] = invoices };
-            var options = new DialogOptions {  
-                CloseButton = true,  
-                MaxWidth = MaxWidth.Medium,  
-                FullWidth = true,  
-                Position = DialogPosition.Center,  
-                NoHeader = true,  
-                BackdropClick = true,  
-                CloseOnEscapeKey = true , 
-                BackgroundClass = "my-custom-class"
-            };
-            var dialog = DialogService.Show<Invoices>("Customer Invoices", parameters, options);
-            var result = await dialog.Result;
+            NavigationManager.NavigateTo($"/invoices?customerId={customer.Id}");
         }
         else
         {
-            Snackbar.Add("No invoices available for this customer.", Severity.Warning);
+            Snackbar.Add("Customer ID is missing.", Severity.Error);
         }
     }
+
 
     public async Task Deletecustomer(Customer customer)
     {
         await _customerService.DeleteAsync(customer);
         Cust.Remove(customer);
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add("Customer Deleted Successfully", Severity.Success);
+        if (!_disposed)
+        {
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+            Snackbar.Add("Customer Deleted Successfully", Severity.Success);
+        }
     }
+
+   
 }

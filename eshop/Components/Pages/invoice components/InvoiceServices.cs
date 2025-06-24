@@ -16,10 +16,10 @@ namespace eshop.Components.Pages.invoice_components
         public Task<Invoice> GetInvoicebyId(Guid id)
         {
             var _DbContext = _contextFactory?.CreateDbContext();
-#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+             #pragma warning disable CS8619
             return _DbContext.Invoices
                 .FirstOrDefaultAsync(i => i.Id == id);
-#pragma warning restore CS8619 // Nullability of reference types in value doesn't match target type.
+             #pragma warning restore CS8619
         }
         public Task<List<Invoice>> GetInvoices()
         {
