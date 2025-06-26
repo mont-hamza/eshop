@@ -8,6 +8,5 @@ namespace eshop.Components.Pages.Product_components
         Task<Product> SaveProduct(Product product);
         Task<Product> UpdateProduct(Product product);
         Task DeleteProduct(Product product);
-        Task <List<Product>> GetSampleProducts();
     }
 }

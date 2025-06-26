@@ -22,7 +22,7 @@
                     <MudText>@item.Description</MudText>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton Variant="Variant.Filled" Color="Color.Default" @onclick="() => NavigateToAddProduct(item)">Edit</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Default" @onclick="() => NavigateToEditProduct(item)">Edit</MudButton>
                     <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick="() => DeleteProduct(item)">Remove</MudButton>
                 </MudCardActions>
             </MudCard>
@@ -38,7 +38,7 @@
     {
         try
         {
-            Product = await _productService.GetSampleProducts();
+            Product = await _productService.GetProducts();
         }
         catch (Exception ex)
         {
@@ -51,7 +51,7 @@
         }
 
     }
-    private void NavigateToAddProduct(Product product)
+    private void NavigateToEditProduct(Product product)
     {
         if (product == null) return;
         NavigationManager.NavigateTo($"/productsedit/{product.Id}");

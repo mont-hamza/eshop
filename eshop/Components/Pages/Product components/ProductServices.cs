@@ -57,6 +57,7 @@ namespace eshop.Components.Pages.Product_components
             existingProduct.Name = product.Name;
             existingProduct.Price = product.Price;
             existingProduct.Description = product.Description;
+            existingProduct.Category = product.Category;
             existingProduct.ImageUrl = product.ImageUrl;
             await _DbContext.SaveChangesAsync();
             return existingProduct;
@@ -76,15 +77,6 @@ namespace eshop.Components.Pages.Product_components
             _DbContext.Products.Remove(existingProduct);
             await _DbContext.SaveChangesAsync();
         }
-        public Task<List<Product>> GetSampleProducts()
-        {
-            var sampleProducts = new List<Product>
-            {
-                new Product { Id = Guid.NewGuid(), Name = "Sample Product 1", Price = 10.99m, Description = "This is a sample product.", ImageUrl = "https://example.com/sample1.jpg" },
-                new Product { Id = Guid.NewGuid(), Name = "Sample Product 2", Price = 20.99m, Description = "This is another sample product.", ImageUrl = "https://example.com/sample2.jpg" },
-                new Product { Id = Guid.NewGuid(), Name = "Sample Product 3", Price = 30.99m, Description = "This is yet another sample product.", ImageUrl = "https://example.com/sample3.jpg" }
-            };
-            return Task.FromResult(sampleProducts);
-        }
+        
     }
 }
