@@ -1,82 +1,40 @@
-﻿
 using eshop.Data;
 using eshop.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+
 namespace eshop.Components.Pages.Product_components
 {
     public class ProductServices : IProductServices
     {
+        private readonly ApplicationDbContext _context;
 
-        private readonly IDbContextFactory<ApplicationDbContext>? _contextFactory;
-        public ProductServices(IDbContextFactory<ApplicationDbContext>? contextFactory)
+        public ProductServices(ApplicationDbContext context)
         {
-            _contextFactory = contextFactory;
+            _context = context;
         }
 
-        public async Task<List<Product>> GetProducts()
+        public async Task<List<Product>> GetProducts() =>
+            await _context.Products.ToListAsync();
+
+        public async Task<Product?> GetProductById(Guid id) =>
+            await _context.Products.FindAsync(id);
+
+        public async Task AddProduct(Product product)
         {
-            var _DbContext = _contextFactory?.CreateDbContext();
-            if (_DbContext == null)
-            {
-                throw new Exception("Database context is not available");
-            }
-            return await _DbContext.Products.ToListAsync();
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
         }
-        public async Task<Product?> GetProductById(Guid id)
+
+        public async Task UpdateProduct(Product product)
         {
-            var _DbContext = _contextFactory?.CreateDbContext();
-            if (_DbContext == null)
-            {
-                throw new Exception("Database context is not available");
-            }
-            return await _DbContext.Products.FindAsync(id);
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
         }
-        public async Task<Product> SaveProduct(Product product)
-        {
-            var _DbContext = _contextFactory?.CreateDbContext();
-            if (_DbContext == null)
-            {
-                throw new Exception("Database context is not available");
-            }
-            _DbContext.Products.Add(product);
-            await _DbContext.SaveChangesAsync();
-            return product;
-        }
-        public async Task<Product> UpdateProduct(Product product)
-        {
-            var _DbContext = _contextFactory?.CreateDbContext();
-            if (_DbContext == null)
-            {
-                throw new Exception("Database context is not available");
-            }
-            var existingProduct = await _DbContext.Products.FindAsync(product.Id);
-            if (existingProduct == null)
-            {
-                throw new Exception("Product not found");
-            }
-            existingProduct.Name = product.Name;
-            existingProduct.Price = product.Price;
-            existingProduct.Description = product.Description;
-            existingProduct.Category = product.Category;
-            existingProduct.ImageUrl = product.ImageUrl;
-            await _DbContext.SaveChangesAsync();
-            return existingProduct;
-        }
+
         public async Task DeleteProduct(Product product)
         {
-            var _DbContext = _contextFactory?.CreateDbContext();
-            if (_DbContext == null)
-            {
-                throw new Exception("Database context is not available");
-            }
-            var existingProduct = await _DbContext.Products.FindAsync(product.Id);
-            if (existingProduct == null)
-            {
-                throw new Exception("Product not found");
-            }
-            _DbContext.Products.Remove(existingProduct);
-            await _DbContext.SaveChangesAsync();
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
         }
-        
     }
 }

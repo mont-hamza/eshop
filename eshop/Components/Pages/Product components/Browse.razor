@@ -6,51 +6,69 @@
 @inject NavigationManager NavigationManager
 @inject IProductServices _productService
 
-
-<h3>Browse</h3>
+<h3>Browse Products</h3>
 <MudButton Color="Color.Dark" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" @onclick="NavigateToAddProduct">
-    Add Product</MudButton>
-<MudGrid Spacing="3" Justify="Justify.FlexStart">
-    @foreach (var item in Product)
-    {
-        <MudItem xs="12" sm="6" md="4" lg="3">
-            <MudCard Elevation="8">
-                <MudCardMedia Image="@item.ImageUrl" Height="150" />
-                <MudCardContent>
-                    <MudText Typo="Typo.h6">@item.Name</MudText>
-                    <MudText Typo="Typo.subtitle1" Color="Color.Primary">@($"${item.Price:F2}")</MudText>
-                    <MudText>@item.Description</MudText>
-                </MudCardContent>
-                <MudCardActions>
-                    <MudButton Variant="Variant.Filled" Color="Color.Default" @onclick="() => NavigateToEditProduct(item)">Edit</MudButton>
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick="() => DeleteProduct(item)">Remove</MudButton>
-                </MudCardActions>
-            </MudCard>
-        </MudItem>
-    }
-</MudGrid>
+    Add Product
+</MudButton>
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+}
+else
+{
+    <MudGrid Spacing="3" Justify="Justify.FlexStart">
+        @foreach (var item in products)
+        {
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <MudCard Elevation="8">
+                    <MudCardMedia Image="@item.ImageUrl" Height="150" />
+                    <MudCardContent>
+                        <MudText Typo="Typo.h6">@item.Name</MudText>
+                        <MudText Typo="Typo.subtitle1" Color="Color.Primary">@($"${item.Price:F2}")</MudText>
+                        <MudText>@item.Description</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Secondary">Category: @item.Category</MudText>
+                        <MudText Typo="Typo.caption">Stock: @(item.StockQuantity ?? 0)</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Filled" Color="Color.Default" @onclick="() => NavigateToEditProduct(item)">Edit</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick="() => ConfirmDeleteProduct(item)">Remove</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+<MudDialog @bind-IsOpen="_deleteDialogOpen">
+    <DialogContent>
+        <MudText Typo="Typo.h6">Are you sure you want to delete this product?</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="DeleteConfirmed">Delete</MudButton>
+        <MudButton OnClick="() => _deleteDialogOpen = false">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
-    private string searchString1 = string.Empty;
-    private List<Product> Product = new List<Product>();
+    private List<Product> products = new();
     private bool _loading = true;
+    private bool _deleteDialogOpen = false;
+    private Product? _productToDelete;
+
     protected override async Task OnInitializedAsync()
     {
+        _loading = true;
         try
         {
-            Product = await _productService.GetProducts();
+            products = await _productService.GetProducts();
         }
         catch (Exception ex)
         {
-
             Snackbar.Add($"Error loading products: {ex.Message}", Severity.Error);
         }
-        finally
-        {
-            _loading = false;
-        }
-
+        _loading = false;
     }
+
     private void NavigateToEditProduct(Product product)
     {
         if (product == null) return;
@@ -60,20 +78,28 @@
     {
         NavigationManager.NavigateTo("/productsedit");
     }
-    private async Task DeleteProduct(Product product)
+    private void ConfirmDeleteProduct(Product product)
     {
-        if (product == null) return;
+        _productToDelete = product;
+        _deleteDialogOpen = true;
+    }
+    private async Task DeleteConfirmed()
+    {
+        if (_productToDelete == null) return;
         try
         {
-            await _productService.DeleteProduct(product);
-            Product.Remove(product);
+            await _productService.DeleteProduct(_productToDelete);
+            products.Remove(_productToDelete);
             Snackbar.Add("Product deleted successfully", Severity.Success);
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Error deleting product: {ex.Message}", Severity.Error);
         }
+        finally
+        {
+            _deleteDialogOpen = false;
+            _productToDelete = null;
+        }
     }
-
-    
 }

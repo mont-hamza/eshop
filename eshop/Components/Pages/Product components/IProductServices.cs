@@ -1,12 +1,10 @@
-﻿using eshop.Data.Entities;
-namespace eshop.Components.Pages.Product_components
+using eshop.Data.Entities;
+
+public interface IProductServices
 {
-    public interface IProductServices
-    {
-        Task<List<Product>> GetProducts();
-        Task<Product?> GetProductById(Guid id);
-        Task<Product> SaveProduct(Product product);
-        Task<Product> UpdateProduct(Product product);
-        Task DeleteProduct(Product product);
-    }
+    Task<List<Product>> GetProducts();
+    Task<Product?> GetProductById(Guid id);
+    Task AddProduct(Product product);
+    Task UpdateProduct(Product product);
+    Task DeleteProduct(Product product);
 }
