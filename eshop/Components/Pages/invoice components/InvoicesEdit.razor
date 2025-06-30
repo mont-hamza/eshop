@@ -26,10 +26,10 @@
 </MudSelect>
 @if (SelectedCustomer != null)
 {
-    <MudTextField Value="SelectedCustomer.CustomerName" Label="Customer Name" Disabled="false" />
-    <MudTextField Value="SelectedCustomer.CustomerEmail" Label="Customer Email" Disabled="false" />
-    <MudTextField Value="SelectedCustomer.CustomerPhone" Label="Customer Phone" Disabled="false" />
-    <MudTextField Value="SelectedCustomer.CustomerAddress" Label="Customer Address" Disabled="false" />
+    <MudTextField Value="SelectedCustomer.CustomerName" Label="Customer Name" Disabled="true" />
+    <MudTextField Value="SelectedCustomer.CustomerEmail" Label="Customer Email" Disabled="true" />
+    <MudTextField Value="SelectedCustomer.CustomerPhone" Label="Customer Phone" Disabled="true" />
+    <MudTextField Value="SelectedCustomer.CustomerAddress" Label="Customer Address" Disabled="true" />
 }
 <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="SaveChangesInvoice">Save</MudButton>
 <MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="navigateback">Back</MudButton>

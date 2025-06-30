@@ -20,23 +20,43 @@
     {
         <img src="@product.ImageUrl" alt="Product Image" style="max-width:200px;max-height:200px;" />
     }
-    <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
+    <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Dark" OnClick="HandleValidSubmit">Save</MudButton>
     <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="GoBack">Cancel</MudButton>
 </EditForm>
 
 @code {
     [Parameter] public Guid? Id { get; set; }
-    private Product product = new();
+    private Product product { get; set; } = new Product();
+    private string PageHeadertext { get; set; } = string.Empty; // Added declaration for PageHeadertext
     private string? imageUploadError;
 
     protected override async Task OnInitializedAsync()
     {
-        if (Id.HasValue && Id.Value != Guid.Empty)
-        {
-            var existing = await _productService.GetProductById(Id.Value);
-            if (existing != null)
-                product = existing;
-        }
+
+        await Task.Delay(1000);
+                if (Id.HasValue && Id.Value != Guid.Empty) // Ensure Id is not null and has a valid value  
+                {  
+                    PageHeadertext = "Edit Product";  
+                    product = await _productService.GetProductById(Id.Value); // Use Id.Value to pass a non-nullable Guid  
+                    if (product == null)  
+                    {  
+                        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;  
+                        Snackbar.Add("Product not found!", Severity.Error);  
+                        NavigationManager.NavigateTo("/browse");  
+                    }  
+                    else  
+                    {  
+                        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;  
+                        Snackbar.Add("Product loaded successfully!", Severity.Success);  
+                    }  
+                }  
+                else  
+                {  
+                    PageHeadertext = "Add Product"; // Set the header text for adding  
+                    product = new Product(); // Initialize a new product if no ID is provided  
+                }  
+            
+        
     }
 
     private async Task OnImageSelected(InputFileChangeEventArgs e)
