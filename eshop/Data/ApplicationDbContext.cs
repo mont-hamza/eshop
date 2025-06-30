@@ -14,7 +14,7 @@ namespace eshop.Data
         }
         public DbSet<Customer> Customers { get; set; } = default!;
         public DbSet<Invoice> Invoices { get; set; } = default!;
-        public DbSet<Product> Products { get; set; }
+        public DbSet<Product> Products { get; set; } = default!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -42,6 +42,18 @@ namespace eshop.Data
                       .WithMany(c => c.Invoices)
                       .HasForeignKey(i => i.CustomerId)
                       .OnDelete(DeleteBehavior.Cascade);
+            });
+            // Configure the primary key for Product    
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.ToTable("Products");
+                entity.HasKey(p => p.Id);
+                entity.Property(p => p.Name).IsRequired().HasMaxLength(100);
+                entity.Property(p => p.Description).HasMaxLength(500);
+                entity.Property(p => p.Category).IsRequired().HasMaxLength(50);
+                entity.Property(p => p.Price).HasColumnType("decimal(18,2)");
+                entity.Property(p => p.ImageUrl).IsRequired();
+                entity.Property(p => p.StockQuantity).IsRequired(false);
             });
         }
     }

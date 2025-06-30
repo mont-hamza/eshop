@@ -1,0 +1,74 @@
+@page "/roles"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Identity
+@inject RoleManager<IdentityRole> RoleManager
+@inject ISnackbar Snackbar
+
+<h1>Roles</h1>
+
+<MudTable Items="roles" Dense="true" Hover="true" Bordered="true" Striped="true" Loading="loading">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Roles Management</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="newRoleName" Placeholder="New Role Name" Class="mt-0"></MudTextField>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddRole">Add Role</MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Role Name</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Role Name">@context.Name</MudTd>
+        <MudTd DataLabel="Actions">
+            <MudButton Color="Color.Error" Variant="Variant.Filled" @onclick="() => DeleteRole(context)">Delete</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private List<IdentityRole> roles = new();
+    private string newRoleName = string.Empty;
+    private bool loading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        roles = RoleManager.Roles.ToList();
+        loading = false;
+    }
+
+    private async Task AddRole()
+    {
+        if (!string.IsNullOrWhiteSpace(newRoleName))
+        {
+            var result = await RoleManager.CreateAsync(new IdentityRole(newRoleName));
+            if (result.Succeeded)
+            {
+                Snackbar.Add($"Role '{newRoleName}' added.", Severity.Success);
+                roles = RoleManager.Roles.ToList();
+                newRoleName = string.Empty;
+            }
+            else
+            {
+                Snackbar.Add($"Failed to add role: {string.Join(", ", result.Errors.Select(e => e.Description))}", Severity.Error);
+            }
+        }
+    }
+
+    private async Task DeleteRole(IdentityRole role)
+    {
+        var result = await RoleManager.DeleteAsync(role);
+        if (result.Succeeded)
+        {
+            Snackbar.Add($"Role '{role.Name}' deleted.", Severity.Success);
+            roles = RoleManager.Roles.ToList();
+        }
+        else
+        {
+            Snackbar.Add($"Failed to delete role: {string.Join(", ", result.Errors.Select(e => e.Description))}", Severity.Error);
+        }
+    }
+}

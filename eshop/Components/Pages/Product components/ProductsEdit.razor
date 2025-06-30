@@ -1,62 +1,84 @@
-﻿@page "/productsedit"  
-@page "/productsedit/{id:guid}"  
-@rendermode InteractiveServer  
-@using eshop.Data.Entities  
-@using eshop.Components.Pages.Product_components  
-@inject IProductServices _productService  
-@inject ISnackbar Snackbar  
-@inject NavigationManager NavigationManager  
+﻿@page "/productsedit"
+@page "/productsedit/{Id:guid}"
+@rendermode InteractiveServer
+@using eshop.Data.Entities
+@using eshop.Components.Pages.Product_components
+@inject IProductServices _productService
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
 
-<EditForm Model="product" OnValidSubmit="HandleValidSubmit">  
-    <MudTextField @bind-Value="product.Name" Label="Name" Required="true" />  
-    <MudTextField @bind-Value="product.Description" Label="Description" />  
-    <MudTextField @bind-Value="product.Category" Label="Category" />  
-    <MudTextField @bind-Value="product.Price" Label="Price" InputType="InputType.Number" />  
-    <MudTextField @bind-Value="product.StockQuantity" Label="Stock Quantity" InputType="InputType.Number" />  
+<h3>@(Id == Guid.Empty ? "Add Product" : "Edit Product")</h3>
+<EditForm Model="product" OnValidSubmit="HandleValidSubmit">
+    <MudTextField @bind-Value="product.Name" Label="Name" Required="true" />
+    <MudTextField @bind-Value="product.Description" Label="Description" />
+    <MudTextField @bind-Value="product.Category" Label="Category" />
+    <MudTextField @bind-Value="product.Price" Label="Price" InputType="InputType.Number" />
+    <MudTextField @bind-Value="product.StockQuantity" Label="Stock Quantity" InputType="InputType.Number" />
 
-    <InputFile OnChange="OnImageSelected" />  
-    @if (!string.IsNullOrEmpty(product.ImageUrl))  
-    {  
-        <img src="@product.ImageUrl" alt="Product Image" style="max-width:200px;max-height:200px;" />  
-    }  
+    <InputFile OnChange="OnImageSelected" />
+    @if (!string.IsNullOrEmpty(product.ImageUrl))
+    {
+        <img src="@product.ImageUrl" alt="Product Image" style="max-width:200px;max-height:200px;" />
+    }
+    <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Secondary" OnClick="GoBack">Cancel</MudButton>
+</EditForm>
 
-    <MudButton Type="Submit" Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>  
-</EditForm>  
+@code {
+    [Parameter] public Guid? Id { get; set; }
+    private Product product = new();
+    private string? imageUploadError;
 
-@code {  
-    [Parameter] public Guid? Id { get; set; }  
-    private Product product = new();  
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue && Id.Value != Guid.Empty)
+        {
+            var existing = await _productService.GetProductById(Id.Value);
+            if (existing != null)
+                product = existing;
+        }
+    }
 
-    protected override async Task OnInitializedAsync()  
-    {  
-        if (Id.HasValue)  
-        {  
-            product = await _productService.GetProductById(Id.Value) ?? new Product();  
-        }  
-    }  
+    private async Task OnImageSelected(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var file = e.File;
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
+            var filePath = Path.Combine("images", "products", fileName);
+            var absolutePath = Path.Combine(Environment.CurrentDirectory, "wwwroot", filePath);
 
-    private async Task OnImageSelected(InputFileChangeEventArgs e)  
-    {  
-        var file = e.File;  
-        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";  
-        var filePath = Path.Combine("images", "products", fileName);  
-        var absolutePath = Path.Combine(Environment.CurrentDirectory, "wwwroot", filePath);  
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath)!);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(absolutePath)!);  
+            using var stream = File.Create(absolutePath);
+            await file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).CopyToAsync(stream);
 
-        using var stream = File.Create(absolutePath);  
-        await file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).CopyToAsync(stream);  
+            product.ImageUrl = "/" + filePath.Replace("\\", "/");
+            imageUploadError = null;
+        }
+        catch (Exception ex)
+        {
+            imageUploadError = $"Image upload failed: {ex.Message}";
+            Snackbar.Add(imageUploadError, Severity.Error);
+        }
+    }
 
-        product.ImageUrl = "/" + filePath.Replace("\\", "/");  
-    }  
+    private async Task HandleValidSubmit()
+    {
+        if (Id.HasValue && Id.Value != Guid.Empty)
+            await _productService.UpdateProduct(product);
+        else
+        {
+            product.Id = Guid.NewGuid();
+            await _productService.AddProduct(product);
+        }
 
-    private async Task HandleValidSubmit()  
-    {  
-        if (Id.HasValue)  
-            await _productService.UpdateProduct(product);  
-        else  
-            await _productService.SaveProduct(product);
+        Snackbar.Add("Product saved successfully!", Severity.Success);
+        NavigationManager.NavigateTo("/browse");
+    }
 
-        NavigationManager.NavigateTo("/browse");  
-    }  
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/browse");
+    }
 }
