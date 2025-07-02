@@ -1,0 +1,96 @@
+@page "/admin-dashboard"
+@rendermode InteractiveServer
+@using Microsoft.EntityFrameworkCore
+@using eshop.Data.Entities
+@using eshop.Data
+@inject ApplicationDbContext Db
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MudText Typo="Typo.h4" GutterBottom="true">Admin Dashboard</MudText>
+    <MudGrid>
+        <MudItem xs="12" sm="6">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudText Typo="Typo.h6">Total Customers</MudText>
+                <MudText Typo="Typo.h3">@totalCustomers</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudPaper Class="pa-4" Elevation="2">
+                <MudText Typo="Typo.h6">Total Invoices</MudText>
+                <MudText Typo="Typo.h3">@totalInvoices</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudDivider Class="my-4" />
+
+    <MudText Typo="Typo.h6" GutterBottom="true">Recent Customers</MudText>
+    <MudTable Items="recentCustomers" Dense="true" Hover="true" Bordered="true" Striped="true">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Phone</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.CustomerName</MudTd>
+            <MudTd>@context.CustomerEmail</MudTd>
+            <MudTd>@context.CustomerPhone</MudTd>
+            <MudTd>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => ViewCustomer(context.Id))">View</MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    <MudDivider Class="my-4" />
+
+    <MudText Typo="Typo.h6" GutterBottom="true">Recent Invoices</MudText>
+    <MudTable Items="recentInvoices" Dense="true" Hover="true" Bordered="true" Striped="true">
+        <HeaderContent>
+            <MudTh>Invoice #</MudTh>
+            <MudTh>Customer</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.Id</MudTd>
+            <MudTd>@context.Customer?.CustomerName</MudTd> 
+            <MudTd>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => ViewInvoice(context.Id))">View</MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private int totalCustomers;
+    private int totalInvoices;
+    private List<Customer> recentCustomers = new();
+    private List<Invoice> recentInvoices = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        totalCustomers = await Db.Customers.CountAsync();
+        totalInvoices = await Db.Invoices.CountAsync();
+        recentCustomers = await Db.Customers
+            .OrderByDescending(c => c.Id)
+            .Take(5)
+            .Include(c => c.Invoices)
+            .ToListAsync();
+        recentInvoices = await Db.Invoices
+            .OrderByDescending(i => i.Id)
+            .Take(5)
+            .Include(i => i.Customer)
+            .ToListAsync();
+    }
+
+    private void ViewCustomer(Guid id)
+    {
+        NavigationManager.NavigateTo($"/customersedit/{id}");
+    }
+
+    private void ViewInvoice(Guid id)
+    {
+        NavigationManager.NavigateTo($"/invoicesedit/{id}");
+    }
+}

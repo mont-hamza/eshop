@@ -32,12 +32,18 @@
     private List<IdentityRole> roles = new();
     private string newRoleName = string.Empty;
     private bool loading = false;
+    private bool disposed = false;
 
     protected override async Task OnInitializedAsync()
     {
         loading = true;
         roles = RoleManager.Roles.ToList();
         loading = false;
+    }
+
+    public void Dispose()
+    {
+        disposed = true;
     }
 
     private async Task AddRole()
@@ -55,6 +61,8 @@
             {
                 Snackbar.Add($"Failed to add role: {string.Join(", ", result.Errors.Select(e => e.Description))}", Severity.Error);
             }
+            if (!disposed)
+                await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -70,5 +78,7 @@
         {
             Snackbar.Add($"Failed to delete role: {string.Join(", ", result.Errors.Select(e => e.Description))}", Severity.Error);
         }
+        if (!disposed)
+            await InvokeAsync(StateHasChanged);
     }
 }
