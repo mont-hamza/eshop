@@ -159,7 +159,7 @@
 
     public async Task Deletecustomer(Customer customer)
     {
-        await _customerService.DeleteAsync(customer);
+        await _customerService.DeleteAsync(customer.Id);
         Cust.Remove(customer);
         if (!_disposed)
         {

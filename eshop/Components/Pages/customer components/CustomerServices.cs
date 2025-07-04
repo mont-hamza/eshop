@@ -58,21 +58,17 @@ namespace eshop.Components.Pages.customer_components
             await _DbContext.SaveChangesAsync();
             return existingCustomer;
         }
-        public async Task DeleteAsync(Customer customer)
+        public async Task DeleteAsync(Guid id)
         {
             var _DbContext = _contextFactory?.CreateDbContext();
-            var existingCustomer = _DbContext?.Customers.Find(customer.Id);
+            var existingCustomer = _DbContext?.Customers.Find(id);
             if (existingCustomer != null)
             {
                 _DbContext?.Customers.Remove(existingCustomer);
                 await _DbContext.SaveChangesAsync();
             }
-            else
-            {
-                throw new Exception("Customer not found");
-            }
+            
 
         }
-        
     }
 }

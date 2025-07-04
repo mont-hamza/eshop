@@ -362,3 +362,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /eshop.sln
+/eshop/Components/Pages/customer components/Customers.razor
+/eshop/Components/Pages/customer components/CustomerServices.cs
+/eshop/Components/Pages/customer components/ICustomerServices.cs
+/.gitignore
+/eshop/Components/Pages/customer components/CustomerServices.cs
+/eshop/Components/Pages/customer components/Customers.razor
+/eshop/Components/Pages/customer components/ICustomerServices.cs
