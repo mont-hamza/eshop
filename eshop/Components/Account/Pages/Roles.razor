@@ -41,10 +41,6 @@
         loading = false;
     }
 
-    public void Dispose()
-    {
-        disposed = true;
-    }
 
     private async Task AddRole()
     {
@@ -62,7 +58,9 @@
                 Snackbar.Add($"Failed to add role: {string.Join(", ", result.Errors.Select(e => e.Description))}", Severity.Error);
             }
             if (!disposed)
+            {
                 await InvokeAsync(StateHasChanged);
+            }
         }
     }
 
@@ -80,5 +78,10 @@
         }
         if (!disposed)
             await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        disposed = true;
     }
 }

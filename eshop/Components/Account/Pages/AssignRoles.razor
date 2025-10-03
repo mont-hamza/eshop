@@ -1,0 +1,78 @@
+@page "/assign-roles"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using eshop.Data
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-8">
+    <MudText Typo="Typo.h4" GutterBottom="true">Assign Roles to Users</MudText>
+    <MudTable Items="users" Dense="true" Hover="true" Bordered="true" Striped="true">
+        <HeaderContent>
+            <MudTh>User Name</MudTh>
+            <MudTh>Email</MudTh>
+            <MudTh>Roles</MudTh>
+            <MudTh>Assign Role</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.UserName</MudTd>
+            <MudTd>@context.Email</MudTd>
+            <MudTd>
+                @foreach (var role in userRoles[context.Id])
+                {
+                    <MudChip T="string" Color="Color.Primary" Class="mr-1">@role</MudChip>
+                }
+            </MudTd>
+            <MudTd>
+                <MudSelect T="string" @bind-Value="selectedRole[context.Id]" Dense="true" Placeholder="Select Role">
+                    @foreach (var role in roles)
+                    {
+                        <MudSelectItem Value="@role.Name">@role.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="ml-2" @onclick="() => AssignRole(context.Id)">Assign</MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private List<ApplicationUser> users = new();
+    private List<IdentityRole> roles = new();
+    private Dictionary<string, List<string>> userRoles = new();
+    private Dictionary<string, string> selectedRole = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = UserManager.Users.ToList();
+        roles = RoleManager.Roles.ToList();
+        foreach (var user in users)
+        {
+            var rolesForUser = await UserManager.GetRolesAsync(user);
+            userRoles[user.Id] = rolesForUser.ToList();
+            selectedRole[user.Id] = roles.FirstOrDefault()?.Name ?? string.Empty;
+        }
+    }
+
+    private async Task AssignRole(string userId)
+    {
+        var user = await UserManager.FindByIdAsync(userId);
+        var role = selectedRole[userId];
+        if (user != null && !string.IsNullOrEmpty(role))
+        {
+            var result = await UserManager.AddToRoleAsync(user, role);
+            if (result.Succeeded)
+            {
+                Snackbar.Add($"Role '{role}' assigned to user '{user.UserName}'.", Severity.Success);
+                userRoles[userId] = (await UserManager.GetRolesAsync(user)).ToList();
+            }
+            else
+            {
+                Snackbar.Add($"Failed to assign role: {string.Join(", ", result.Errors.Select(e => e.Description))}", Severity.Error);
+            }
+        }
+    }
+}

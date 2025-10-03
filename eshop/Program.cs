@@ -29,6 +29,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuth
 builder.Services.AddScoped<ICustomerServices, CustomerServices>();
 builder.Services.AddScoped<IInvoiceServices, InvoiceServices>();
 builder.Services.AddScoped<IProductServices, ProductServices>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -51,7 +52,35 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.S
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdministratorRole", policy => policy.RequireRole("Administrator"));
+    // Add more policies as needed
+});
+
 var app = builder.Build();
+
+// Ensure required roles exist at startup
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var requiredRoles = new[] { "SuperAdmin", "Admin", "User", "Customer" };
+    foreach (var roleName in requiredRoles)
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+    // Optionally, assign SuperAdmin role to a specific user here
+    // var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    // var superAdminEmail = "superadmin@email.com";
+    // var user = await userManager.FindByEmailAsync(superAdminEmail);
+    // if (user != null && !await userManager.IsInRoleAsync(user, "SuperAdmin"))
+    // {
+    //     await userManager.AddToRoleAsync(user, "SuperAdmin");
+    // }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -67,6 +96,8 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAntiforgery();
 
